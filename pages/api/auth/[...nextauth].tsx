@@ -8,7 +8,6 @@ export const authOptions: NextAuthOptions = {
       clientId: process.env.NEXT_PUBLIC_GOOGLE_ID as string,
       clientSecret: process.env.NEXT_PUBLIC_GOOGLE_SECRET as string,
       profile(profile) {
-        console.log('GREG LOOK!  ~ file: [...nextAuth].tsx:11 ~ profile ~ profile:', profile);
         return {
           id: profile.email,
           // Return all the profile information you need.
