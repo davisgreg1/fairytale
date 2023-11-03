@@ -35,7 +35,7 @@ const Intro = () => {
       )}
       {currentScreen === 5 && (
         <ChildStoryScreen
-          onContinue={() => setCurrentScreen(6)}
+          onContinue={() => setCurrentScreen(5)}
           onGoBack={() => setCurrentScreen(4)}
         />
       )}
