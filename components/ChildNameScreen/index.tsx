@@ -1,4 +1,8 @@
+"use client";
+import { useContext } from "react";
 import { motion } from "framer-motion";
+import InputField from "@/components/InputField";
+import { ChildContext } from "@/contexts/childContext";
 
 interface ChildNameScreenProps {
   onContinue: () => void;
@@ -6,6 +10,11 @@ interface ChildNameScreenProps {
 }
 const ChildNameScreen = (props: ChildNameScreenProps) => {
   const { onContinue, onGoBack } = props;
+  const { name, setName } = useContext(ChildContext);
+
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setName(e.target.value);
+
   return (
     <motion.div
       key="screen-two"
@@ -13,7 +22,15 @@ const ChildNameScreen = (props: ChildNameScreenProps) => {
       animate={{ x: 0, opacity: 1 }}
       exit={{ x: -300, opacity: 0 }}>
       <div className="relative flex flex-col justify-between h-screen m-auto">
-        <div className={`m-auto`}>Name Screen Here</div>
+        <div className={`m-auto`}>
+          <InputField
+            defaultValue={name}
+            name={"child name"}
+            placeholder={`Child's name?`}
+            type={"text"}
+            onChange={onChange}
+          />
+        </div>
         <div className="flex justify-center pb-4">
           {" "}
           <button
@@ -22,7 +39,8 @@ const ChildNameScreen = (props: ChildNameScreenProps) => {
             Go Back
           </button>
           <button
-            className="p-2 text-white bg-blue-500 rounded hover:bg-blue-700"
+            disabled={!name}
+            className="p-2 text-white bg-blue-500 rounded hover:bg-blue-700 disabled:opacity-50"
             onClick={onContinue}>
             Continue
           </button>
