@@ -1,4 +1,7 @@
 import AIImage from "@/components/AIImage";
+import Intro from "@/components/Intro";
+
+
 
 export default function Home() {
   const prompt = `1 little young boy with kinky hair sitting in a field of green plants and flowers, 
@@ -6,8 +9,8 @@ export default function Home() {
     blurry foreground`;
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <AIImage prompt={prompt} />
+    <main className="flex min-h-screen flex-col items-center justify-between">
+      <Intro />
     </main>
   );
 }

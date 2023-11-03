@@ -9,10 +9,14 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "framer-motion": "^10.16.4",
     "next": "14.0.1",
+    "next-auth": "^4.24.4",
     "novita-sdk": "^1.0.21",
+    "openai": "^4.14.2",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "react-icons": "^4.11.0"
   },
   "devDependencies": {
     "@types/node": "^20",
