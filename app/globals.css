@@ -25,3 +25,43 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
+
+.page-even {
+  box-shadow: inset 7px 0 30px -7px rgba(0,0,0,.4) !important;
+  border-left: 0 !important;
+}
+
+.page-odd {
+  box-shadow: inset -7px 0 30px -7px rgba(0,0,0,.4);
+  border-right: 0 !important;
+}
+
+.page-footer-even {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  margin: 12px;
+}
+
+.page-footer-odd {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  margin: 12px;
+}
+
+.page {
+  padding: 20px;
+  background-color: #fdfaf7;
+  color: #785e3a;
+  border: 1px solid #c2b5a3;
+  overflow: hidden;
+}
+
+.page-cover {
+  background-color: #f5f5f5;
+}
+
+.demo-book {
+  top: 100px;
+}

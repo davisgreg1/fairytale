@@ -1,7 +1,9 @@
+"use client";
 import { motion } from "framer-motion";
 import StoryDetailsInput from "@/components/StoryDetailsInput";
-import {ChildContext} from "@/contexts/childContext";
-import {useContext} from "react";
+import { ChildContext } from "@/contexts/childContext";
+import { useContext } from "react";
+import Link from "next/link";
 
 interface ChildStoryScreenProps {
   onContinue: () => void;
@@ -11,6 +13,10 @@ const ChildStoryScreen = (props: ChildStoryScreenProps) => {
   const { story } = useContext(ChildContext);
 
   const { onContinue, onGoBack } = props;
+
+  const handleOnClick = () => {
+    onContinue();
+  };
   return (
     <motion.div
       key="screen-five"
@@ -24,16 +30,29 @@ const ChildStoryScreen = (props: ChildStoryScreenProps) => {
         <div className="flex justify-center pb-4">
           {" "}
           <button
+            type="button"
+            title="go back"
             className="p-2 text-white bg-blue-500 rounded hover:bg-blue-700"
             onClick={onGoBack}>
             Go Back
           </button>
-          <button
-            disabled={story.length < 10}
-            className="p-2 text-white bg-blue-500 rounded hover:bg-blue-700 disabled:opacity-50"
-            onClick={onContinue}>
-            Continue
-          </button>
+          {story.length < 30 ? (
+            <button
+              type="button"
+              title="generate a story"
+              disabled={true}
+              className="p-2 text-white bg-blue-500 rounded hover:bg-blue-700 disabled:opacity-50"
+              onClick={handleOnClick}>
+              Generate Story
+            </button>
+          ) : (
+            <Link
+              type="button"
+              href="/story"
+              className="p-2 text-white bg-blue-500 rounded hover:bg-blue-700 disabled:opacity-50">
+              Generate Story
+            </Link>
+          )}
         </div>
       </div>
     </motion.div>
