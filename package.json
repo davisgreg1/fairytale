@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.7.0",
     "axios": "^1.6.0",
     "classnames": "^2.3.2",
     "framer-motion": "^10.16.4",
@@ -23,6 +24,8 @@
     "react-pageflip": "^2.0.3"
   },
   "devDependencies": {
+    "@tanstack/eslint-plugin-query": "^5.6.0",
+    "@tanstack/react-query-devtools": "^5.7.0",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

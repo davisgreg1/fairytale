@@ -33,9 +33,13 @@ export default function StoryBook(content: StoryBookProps) {
     for (let i = 0; i < aiGenerations.length; i++) {
       let slicedArr = aiGenerations.splice(i, 2);
       pageData.push({
-        pageNumber: i,
-        storyText: slicedArr[0]?.includes('Generate') ? slicedArr[1]: slicedArr[0],
-        aiPrompt: slicedArr[1]?.includes('Generate') ? slicedArr[1]: slicedArr[0],
+        pageNumber: i + 1,
+        storyText: slicedArr[0]?.includes("Generate")
+          ? slicedArr[1]
+          : slicedArr[0],
+        aiPrompt: slicedArr[1]?.includes("Generate")
+          ? slicedArr[1]
+          : slicedArr[0],
       });
     }
     return pageData;
@@ -44,45 +48,43 @@ export default function StoryBook(content: StoryBookProps) {
   const aiPageData = getPageData();
 
   return (
-    <div>
-      <HTMLFlipBook
-        ref={flipBookRef}
-        className={"demo-book"}
-        width={550}
-        height={600}
-        size="stretch"
-        minWidth={315}
-        maxWidth={1000}
-        minHeight={400}
-        maxHeight={1533}
-        maxShadowOpacity={0.5}
-        showCover={true}
-        mobileScrollSupport={true}
-        onFlip={onPage}
-        startPage={0}
-        drawShadow={true}
-        startZIndex={0}
-        autoSize={true}
-        style={{ margin: "auto" }}
-        renderOnlyPageLengthChange={true}
-        flippingTime={1000}
-        usePortrait={true}
-        clickEventForward={true}
-        useMouseEvents={true}
-        swipeDistance={0}
-        showPageCorners={true}
-        disableFlipByClick={false}>
-        <PageCover>{`A fairy tale for ${name}`}</PageCover>
-        {aiPageData.map((page) => {
-          return (
-            <Page key={page.pageNumber} number={page.pageNumber}>
-              {page.storyText}
-              {/* {page.aiPrompt} */}
-            </Page>
-          );
-        })}
-        <PageCover>THE END</PageCover>
-      </HTMLFlipBook>
-    </div>
+    <HTMLFlipBook
+      ref={flipBookRef}
+      className={"demo-book"}
+      width={550}
+      height={600}
+      size="stretch"
+      minWidth={315}
+      maxWidth={1000}
+      minHeight={400}
+      maxHeight={1533}
+      maxShadowOpacity={0.5}
+      showCover={true}
+      mobileScrollSupport={true}
+      onFlip={onPage}
+      startPage={0}
+      drawShadow={true}
+      startZIndex={0}
+      autoSize={true}
+      style={{ margin: "auto" }}
+      renderOnlyPageLengthChange={true}
+      flippingTime={1000}
+      usePortrait={true}
+      clickEventForward={true}
+      useMouseEvents={true}
+      swipeDistance={0}
+      showPageCorners={true}
+      disableFlipByClick={false}>
+      <PageCover>{`A fairy tale for ${name}`}</PageCover>
+      {aiPageData.map((page) => {
+        return (
+          <Page key={page.pageNumber} number={page.pageNumber}>
+            {page.storyText}
+            {page.aiPrompt}
+          </Page>
+        );
+      })}
+      <PageCover>THE END</PageCover>
+    </HTMLFlipBook>
   );
 }

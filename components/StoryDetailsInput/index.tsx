@@ -5,8 +5,10 @@ import { ChildContext } from "@/contexts/childContext";
 const StoryDetailsInput = () => {
   const { story, setStory } = useContext(ChildContext);
 
-  const handleOnChange = (e: React.ChangeEvent<HTMLTextAreaElement>) =>
+  const handleOnChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setStory(e.target.value);
+    localStorage.setItem("childStory", e.target.value);
+  };
 
   return (
     <motion.div

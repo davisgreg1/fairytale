@@ -12,8 +12,10 @@ const ChildNameScreen = (props: ChildNameScreenProps) => {
   const { onContinue, onGoBack } = props;
   const { name, setName } = useContext(ChildContext);
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
+    localStorage.setItem("childName", e.target.value);
+  };
 
   return (
     <motion.div
