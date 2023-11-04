@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import InputField from "@/components/InputField";
 import { useContext } from "react";
 import { ChildContext } from "@/contexts/childContext";
+import { localStorage } from '@/utils/localStorage';
 
 interface ChildAgeScreenProps {
   onContinue: () => void;
