@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import { motion } from "framer-motion";
 import { ChildContext } from "@/contexts/childContext";
+import { localStorage } from '@/utils/localStorage';
 
 const Dropdown = () => {
   const { gender, setGender } = useContext(ChildContext);

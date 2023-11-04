@@ -47,9 +47,9 @@ export default function StoryComponent({ content }: any) {
         <motion.div
           className="w-full"
           key="story-book-screen"
-          initial={{ x: 300, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          exit={{ x: -300, opacity: 0 }}>
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}>
           <StoryBook content={data?.data.data.choices[0].message.content} />
         </motion.div>
       )}
