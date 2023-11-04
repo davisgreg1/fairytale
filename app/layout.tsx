@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import ChildContextProvider from "@/contexts/childContext";
 import Provider from "@/contexts/sessionProvider";
+import ReactQueryProvider from "@/contexts/ReactQueryProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,12 +17,15 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Provider>
-          <ChildContextProvider>{children}</ChildContextProvider>
-        </Provider>
+        <ReactQueryProvider>
+          <Provider>
+            <ChildContextProvider>{children}</ChildContextProvider>
+          </Provider>
+        </ReactQueryProvider>
       </body>
     </html>
   );

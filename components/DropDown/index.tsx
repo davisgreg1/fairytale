@@ -6,6 +6,7 @@ const Dropdown = () => {
   const { gender, setGender } = useContext(ChildContext);
   const handleOnChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setGender(e.target.value);
+    localStorage.setItem("childGender", e.target.value);
   };
   return (
     <motion.div

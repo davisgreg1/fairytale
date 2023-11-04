@@ -10,8 +10,10 @@ interface ChildAgeScreenProps {
 const ChildAgeScreen = (props: ChildAgeScreenProps) => {
   const { age, setAge } = useContext(ChildContext);
 
-  const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+  const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setAge(+e.target.value);
+    localStorage.setItem("childAge", e.target.value);
+  };
 
   const { onContinue, onGoBack } = props;
   return (

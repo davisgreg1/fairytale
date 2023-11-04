@@ -21,10 +21,15 @@ export const ChildContext = createContext<ChildContextProviderType>(
 );
 
 export default function ChildContextProvider({ children }: ChildContextType) {
-  const [name, setName] = useState("");
-  const [gender, setGender] = useState("");
-  const [age, setAge] = useState(1);
-  const [story, setStory] = useState("");
+  const savedName = localStorage.getItem("childName") ?? "";
+  const savedGender = localStorage.getItem("childGender") ?? "";
+  const savedAge = localStorage.getItem("childAge") ?? 1;
+  const savedStory = localStorage.getItem("childStory") ?? "";
+
+  const [name, setName] = useState(savedName);
+  const [gender, setGender] = useState(savedGender);
+  const [age, setAge] = useState(savedAge);
+  const [story, setStory] = useState(savedStory);
 
   return (
     <ChildContext.Provider
