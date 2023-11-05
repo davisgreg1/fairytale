@@ -19,7 +19,7 @@ const Page = React.forwardRef<
       })}
       ref={ref}>
       <div className="page-content">
-        <div className="page-image"></div>
+        {/* <div className="page-image"></div> */}
         <div className="page-text">{props.children}</div>
         <div
           className={cx({
