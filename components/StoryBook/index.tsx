@@ -5,16 +5,24 @@ import React, {
   useRef,
   useState,
 } from "react";
+import Image from "next/image";
 import Page from "@/components/Page";
 import PageCover from "@/components/PageCover";
 import HTMLFlipBook from "react-pageflip";
 import { ChildContext } from "@/contexts/childContext";
 
+interface PagePropsType {
+  storyText: string;
+  aiPrompt: string;
+  pageNumber: number;
+  imageURL: string;
+}
 interface StoryBookProps {
-  content: string;
+  content: PagePropsType[];
 }
 
 export default function StoryBook(content: StoryBookProps) {
+  const aiPageData = content?.content ?? [];
   const flipBookRef = useRef<HTMLDivElement>(null);
 
   const [page, setPage] = useState(0);
@@ -23,29 +31,6 @@ export default function StoryBook(content: StoryBookProps) {
     setPage(e.data);
   }, []);
   const { name } = useContext(ChildContext);
-
-  const singlePages = content.content.split("\n\nPrompt: ");
-  const aiGenerations = singlePages.map((page) => {
-    return page.split("\n\n");
-  })[0];
-  const getPageData = () => {
-    let pageData = [];
-    for (let i = 0; i < aiGenerations.length; i++) {
-      let slicedArr = aiGenerations.splice(i, 2);
-      pageData.push({
-        pageNumber: i + 1,
-        storyText: slicedArr[0]?.includes("Generate")
-          ? slicedArr[1]
-          : slicedArr[0],
-        aiPrompt: slicedArr[1]?.includes("Generate")
-          ? slicedArr[1]
-          : slicedArr[0],
-      });
-    }
-    return pageData;
-  };
-
-  const aiPageData = getPageData();
 
   return (
     <HTMLFlipBook
@@ -79,8 +64,14 @@ export default function StoryBook(content: StoryBookProps) {
       {aiPageData.map((page) => {
         return (
           <Page key={page.pageNumber} number={page.pageNumber}>
-            {page.storyText}
-            {page.aiPrompt}
+            <div className={`flex justify-center items-center relative w-full mobile:h-48 tablet:h-96 desktop:h-96`}>
+              <Image
+                src={page.imageURL}
+                alt={"image based on story"}
+                fill={true}
+              />
+            </div>
+            <div className={`pt-2`}>{page.storyText}</div>
           </Page>
         );
       })}
