@@ -7,7 +7,7 @@ import { ChildContext } from "@/contexts/childContext";
 import getBedtimeStory from "@/server/getBedtimeStory";
 import getImages from "@/utils/getImages";
 import StoryBook from "@/components/StoryBook";
-import useImageGenerator from "@/hooks/useGetImageAI";
+import LoadingAnimation from "@/components/LoadingAnimation";
 
 type PageDataType = {
   aiPrompt: string;
@@ -100,12 +100,12 @@ export default function StoryComponent({ content }: any) {
     <AnimatePresence>
       {!canDisplay && (
         <motion.div
-          className="m-auto"
+          className="m-auto p-4 bg-black"
           key="loading-screen"
           initial={{ x: 300, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           exit={{ x: -300, opacity: 0 }}>
-          Loading...
+          <LoadingAnimation/>
         </motion.div>
       )}
       {canDisplay && (

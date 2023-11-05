@@ -3,7 +3,7 @@ import { useContext } from "react";
 import { motion } from "framer-motion";
 import InputField from "@/components/InputField";
 import { ChildContext } from "@/contexts/childContext";
-import { localStorage } from '@/utils/localStorage';
+import { localStorage } from "@/utils/localStorage";
 
 interface ChildNameScreenProps {
   onContinue: () => void;
@@ -26,6 +26,9 @@ const ChildNameScreen = (props: ChildNameScreenProps) => {
       exit={{ x: -300, opacity: 0 }}>
       <div className="relative flex flex-col justify-between h-screen m-auto">
         <div className={`m-auto`}>
+          <div className="p-4">
+            {name ? "Create a tale for:" : "What is your child's name?"}
+          </div>
           <InputField
             defaultValue={name}
             name={"child name"}

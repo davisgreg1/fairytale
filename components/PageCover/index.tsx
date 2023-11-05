@@ -10,8 +10,8 @@ const PageCover = React.forwardRef<
   React.PropsWithChildren<PageCoverPropsType>
 >((props, ref) => {
   return (
-    <div className="page page-cover" ref={ref} data-density="hard">
-      <div className="page-content">
+    <div className="page page-cover justify-center items-center" ref={ref} data-density="hard">
+      <div className="page-content w-full h-full flex justify-center items-center">
         <h2>{props.children}</h2>
       </div>
     </div>

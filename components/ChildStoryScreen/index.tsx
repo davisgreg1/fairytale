@@ -10,7 +10,7 @@ interface ChildStoryScreenProps {
   onGoBack: () => void;
 }
 const ChildStoryScreen = (props: ChildStoryScreenProps) => {
-  const { story } = useContext(ChildContext);
+  const { story, name } = useContext(ChildContext);
 
   const { onContinue, onGoBack } = props;
 

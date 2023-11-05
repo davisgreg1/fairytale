@@ -1,10 +1,10 @@
 import React, { useContext } from "react";
 import { motion } from "framer-motion";
 import { ChildContext } from "@/contexts/childContext";
-import { localStorage } from '@/utils/localStorage';
+import { localStorage } from "@/utils/localStorage";
 
 const StoryDetailsInput = () => {
-  const { story, setStory } = useContext(ChildContext);
+  const { story, setStory, name } = useContext(ChildContext);
 
   const handleOnChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setStory(e.target.value);
@@ -16,7 +16,9 @@ const StoryDetailsInput = () => {
       initial={{ opacity: 0, y: 50 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="flex items-center justify-center w-[350px] h-96 tablet:w-[500px] desktop:w-[777px]">
+      className="flex items-center flex-col justify-center w-[350px] h-96 tablet:w-[500px] desktop:w-[777px]">
+      <div className="p-4">{`Define your story for: ${name}.`}</div>
+
       <textarea
         defaultValue={story.length >= 30 ? story : "A story about "}
         onChange={handleOnChange}
