@@ -20,7 +20,8 @@ export default function StoryComponent({ content }: any) {
   const { name, age, gender, story } = useContext(ChildContext);
   const { data: session } = useSession();
   const [aiPageDataValue, setAiPageDataValue] = useState<any>([]);
-  const enableQuery = story.length > 30 && !!name && !!age && !!gender;
+  const [mounted, setMounted] = useState(false);
+  const enableQuery = story.length > 30 && !!name && !!age && !!gender && !mounted;
 
   const getAIPrompt = () => {
     if (enableQuery) {
@@ -40,7 +41,7 @@ export default function StoryComponent({ content }: any) {
     enabled: enableQuery,
   });
 
-  const fullContent = data?.data.data.choices[0].message.content;
+  const fullContent = data?.data;
 
   const singlePages = fullContent?.split("\n\nPrompt: ");
   const aiGenerations = singlePages?.map((page: string) => {
@@ -67,7 +68,7 @@ export default function StoryComponent({ content }: any) {
   const aiPageData = getPageData();
 
   useEffect(() => {
-    if (aiPageData?.length > 0) {
+    if (aiPageData?.length > 0 && fullContent?.length > 0 && mounted) {
       // Create an array of promises using map
       const imagePromises = aiPageData.map((page) =>
         getImages({ prompt: page.aiPrompt }),
@@ -82,10 +83,11 @@ export default function StoryComponent({ content }: any) {
         })
         .catch((error) => {
           // Handle any errors here
-          console.error("Error fetching images:", error);
+          console.error("Error fetching images:", error)
         });
     }
-  }, [aiPageData?.length]);
+    setMounted(true);
+  }, [aiPageData?.length, fullContent?.length]);
 
   const allImagesReady =
     aiPageDataValue.length > 0

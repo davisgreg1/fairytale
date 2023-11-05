@@ -1,7 +1,10 @@
 // import prisma from "@/lib/prisma";
-import { getTokens } from "@/lib/tokenizer";
+// import { getTokens } from "@/lib/tokenizer";
 
-export default async function fireGenerateStoryApi(inputText: string, email: string) {
+export default async function fireGenerateStoryApi(
+  inputText: string,
+  email: string,
+) {
   const maxTokenCount = 600;
   try {
     const DEFAULT_PARAMS = {
@@ -30,7 +33,7 @@ export default async function fireGenerateStoryApi(inputText: string, email: str
       body: JSON.stringify(params_),
     };
 
-    let tokenCount = getTokens(inputText);
+    // let tokenCount = getTokens(inputText);
     const moderationOptions = {
       method: "POST",
       headers: {
@@ -43,7 +46,7 @@ export default async function fireGenerateStoryApi(inputText: string, email: str
 
     const moderationsRes = await fetch(
       "https://api.openai.com/v1/moderations",
-      moderationOptions
+      moderationOptions,
     );
     const moderationData = await moderationsRes.json();
 
@@ -62,12 +65,10 @@ export default async function fireGenerateStoryApi(inputText: string, email: str
       //   error:
       //     "Your input has been flagged by the AI and you are banned. Do better.",
       // };
-    } else if (tokenCount > maxTokenCount) {
-      throw new Error("You have exceeded the character limit. Try again.");
     } else {
       const data = await fetch(
         "https://api.openai.com/v1/chat/completions",
-        requestOptions
+        requestOptions,
       );
       const response = await data.json();
 
