@@ -1,19 +1,22 @@
 import { motion } from "framer-motion";
-import InputField from "@/components/InputField";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { ChildContext } from "@/contexts/childContext";
-import { localStorage } from '@/utils/localStorage';
+import { localStorage } from "@/utils/localStorage";
+import RangeSlider from "react-range-slider-input";
+import "react-range-slider-input/dist/style.css";
 
 interface ChildAgeScreenProps {
   onContinue: () => void;
   onGoBack: () => void;
 }
 const ChildAgeScreen = (props: ChildAgeScreenProps) => {
-  const { age, setAge } = useContext(ChildContext);
+  const { age, setAge, name } = useContext(ChildContext);
+  const [value, setValue] = useState([1, age]);
 
-  const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setAge(+e.target.value);
-    localStorage.setItem("childAge", e.target.value);
+  const handleOnChange = (e: [number, number]) => {
+    setValue(e);
+    setAge(e[1]);
+    localStorage.setItem("childAge", e[1].toString());
   };
 
   const { onContinue, onGoBack } = props;
@@ -24,14 +27,17 @@ const ChildAgeScreen = (props: ChildAgeScreenProps) => {
       animate={{ x: 0, opacity: 1 }}
       exit={{ x: -300, opacity: 0 }}>
       <div className="relative flex flex-col justify-between h-screen m-auto">
-        <div className={`m-auto`}>
-          <InputField
-            onChange={handleOnChange}
-            defaultValue={age.toString()}
-            name={"child age"}
-            placeholder={`What is the Child's age?`}
+        <div className={`m-auto w-[300px]`}>
+          <div className="p-4">{`${name}'s age: ${value[1]}`}</div>
+          <RangeSlider
+            onInput={handleOnChange}
+            value={value}
+            className="single-thumb"
+            defaultValue={[1, age]}
+            thumbsDisabled={[true, false]}
+            rangeSlideDisabled={false}
             min={1}
-            type={"number"}
+            max={12}
           />
         </div>
         <div className="flex justify-center pb-4">

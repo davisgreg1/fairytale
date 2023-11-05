@@ -8,7 +8,7 @@ interface ChildGenderScreenProps {
   onGoBack: () => void;
 }
 const ChildGenderScreen = (props: ChildGenderScreenProps) => {
-  const { gender } = useContext(ChildContext);
+  const { gender, name } = useContext(ChildContext);
 
   const { onContinue, onGoBack } = props;
   return (
@@ -19,6 +19,7 @@ const ChildGenderScreen = (props: ChildGenderScreenProps) => {
       exit={{ x: -300, opacity: 0 }}>
       <div className="relative flex flex-col justify-between h-screen m-auto">
         <div className={`m-auto`}>
+        <div className="p-4">{`${name}'s gender`}</div>
           <Dropdown />
         </div>
 

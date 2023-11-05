@@ -17,7 +17,7 @@ export default async function Story() {
   });
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between m-auto">
+    <main className="flex min-h-screen flex-col items-center justify-between m-auto bg-black">
       <HydrationBoundary state={dehydrate(queryClient)}>
         <StoryComponent />
       </HydrationBoundary>
