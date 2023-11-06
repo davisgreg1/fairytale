@@ -126,7 +126,7 @@ export default function StoryComponent({ content }: any) {
     <AnimatePresence>
       {!canDisplay && (
         <motion.div
-          className="m-auto p-4 bg-black"
+          className="m-auto p-4 bg-black transformNone h-full"
           key="loading-screen"
           initial={{ x: 300, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
