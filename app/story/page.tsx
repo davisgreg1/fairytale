@@ -5,6 +5,7 @@ import {
   QueryClient,
   HydrationBoundary,
 } from "@tanstack/react-query";
+import { Suspense } from "react";
 
 export default async function Story() {
   const queryClient = new QueryClient();
@@ -17,10 +18,10 @@ export default async function Story() {
   });
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between m-auto bg-black">
+    <Suspense fallback={<div>Loading...</div>}>
       <HydrationBoundary state={dehydrate(queryClient)}>
         <StoryComponent />
       </HydrationBoundary>
-    </main>
+    </Suspense>
   );
 }
