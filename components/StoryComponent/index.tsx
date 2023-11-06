@@ -1,5 +1,6 @@
 "use client";
 import React, { useContext, useEffect, useState } from "react";
+import { localStorage } from "@/utils/localStorage";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -17,12 +18,24 @@ type PageDataType = {
 };
 
 export default function StoryComponent({ content }: any) {
+  const aiPageDataFromLocalStorage = localStorage.getItem(
+    "aiPageData",
+  ) as string;
+  const parsedAiPageDataFromLocalStorage = aiPageDataFromLocalStorage
+    ? JSON.parse(aiPageDataFromLocalStorage)
+    : [];
   const { name, age, gender, story } = useContext(ChildContext);
   const { data: session } = useSession();
   const [aiPageDataValue, setAiPageDataValue] = useState<any>([]);
   const [mounted, setMounted] = useState(false);
-  const enableQuery = story.length > 30 && !!name && !!age && !!gender && !mounted;
-
+  const [enableCall, setEnableCall] = useState(true);
+  const enableQuery =
+    story.length > 30 &&
+    Boolean(name) &&
+    Boolean(age) &&
+    Boolean(gender) &&
+    mounted &&
+    enableCall;
   const getAIPrompt = () => {
     if (enableQuery) {
       return `generate ${story}. The main character is: ${name}, age: ${age}, gender: ${gender}. Here are the rules: 1. it must be a 370 word bedtime fairy tale. 2. Each different section should have a prompt at the end for novita-sdk to generate an image. 3. The prompt MUST begin with the phrase Generate an image`;
@@ -68,6 +81,16 @@ export default function StoryComponent({ content }: any) {
   const aiPageData = getPageData();
 
   useEffect(() => {
+    if (
+      parsedAiPageDataFromLocalStorage?.length > 0 ||
+      (Boolean(parsedAiPageDataFromLocalStorage) === false &&
+        isFetched &&
+        allImagesReady)
+    ) {
+      setEnableCall(false);
+      setAiPageDataValue(parsedAiPageDataFromLocalStorage);
+      return;
+    }
     if (aiPageData?.length > 0 && fullContent?.length > 0 && mounted) {
       // Create an array of promises using map
       const imagePromises = aiPageData.map((page) =>
@@ -79,11 +102,12 @@ export default function StoryComponent({ content }: any) {
           images.map((image, idx) => {
             aiPageData[idx].imageURL = image[0];
           });
+          localStorage.setItem("aiPageData", JSON.stringify(aiPageData));
           return setAiPageDataValue(aiPageData);
         })
         .catch((error) => {
           // Handle any errors here
-          console.error("Error fetching images:", error)
+          console.error("Error fetching images:", error);
         });
     }
     setMounted(true);
@@ -95,7 +119,9 @@ export default function StoryComponent({ content }: any) {
           return page.imageURL.length > 0;
         })
       : false;
-  const canDisplay = isFetched && allImagesReady;
+  const canDisplay =
+    (isFetched && allImagesReady) ||
+    parsedAiPageDataFromLocalStorage?.length > 0;
   return (
     <AnimatePresence>
       {!canDisplay && (
@@ -105,7 +131,7 @@ export default function StoryComponent({ content }: any) {
           initial={{ x: 300, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           exit={{ x: -300, opacity: 0 }}>
-          <LoadingAnimation/>
+          <LoadingAnimation />
         </motion.div>
       )}
       {canDisplay && (
