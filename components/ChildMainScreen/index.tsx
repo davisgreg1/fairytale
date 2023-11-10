@@ -1,19 +1,23 @@
 "use client";
 import { signIn, useSession, signOut } from "next-auth/react";
 import { AiFillGoogleCircle } from "react-icons/ai";
+import { localStorage } from "@/utils/localStorage";
 import { motion } from "framer-motion";
 
 interface ChildMainScreenProps {
   onContinue: () => void;
 }
 const ChildMainScreen = (props: ChildMainScreenProps) => {
-  const { status } = useSession();
+  const { status, data: session } = useSession();
 
   const sessionAvailable = status === "authenticated";
   const { onContinue } = props;
 
   const handleOnClick = (method: string) => signIn(method);
-  const handleSignOut = () => signOut();
+  const handleSignOut = () => {
+    localStorage.clear()
+    signOut();
+  };
 
   return (
     <motion.div

@@ -25,7 +25,7 @@ const StoryDetailsInput = () => {
         name="storyDetails"
         rows={4}
         placeholder="Tell us a bit about the story you want, for example: 'A story about a little girl that saved Christmas.'"
-        className="form-textarea mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+        className="text-cyan-700 form-textarea mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
       />
     </motion.div>
   );

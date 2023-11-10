@@ -1,8 +1,7 @@
 "use client";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { localStorage } from "@/utils/localStorage";
 import { useQuery } from "@tanstack/react-query";
-import { useSession } from "next-auth/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChildContext } from "@/contexts/childContext";
 import getBedtimeStory from "@/server/getBedtimeStory";
@@ -10,14 +9,7 @@ import getImages from "@/utils/getImages";
 import StoryBook from "@/components/StoryBook";
 import LoadingAnimation from "@/components/LoadingAnimation";
 
-type PageDataType = {
-  aiPrompt: string;
-  pageNumber: number;
-  storyText: string;
-  imageURL: string;
-};
-
-export default function StoryComponent({ content }: any) {
+export default function StoryComponent() {
   const aiPageDataFromLocalStorage = localStorage.getItem(
     "aiPageData",
   ) as string;
@@ -25,20 +17,13 @@ export default function StoryComponent({ content }: any) {
     ? JSON.parse(aiPageDataFromLocalStorage)
     : [];
   const { name, age, gender, story } = useContext(ChildContext);
-  const { data: session } = useSession();
-  const [aiPageDataValue, setAiPageDataValue] = useState<any>([]);
-  const [mounted, setMounted] = useState(false);
-  const [enableCall, setEnableCall] = useState(true);
-  const enableQuery =
-    story.length > 30 &&
-    Boolean(name) &&
-    Boolean(age) &&
-    Boolean(gender) &&
-    mounted &&
-    enableCall;
+  const [isBedtimeStoryFetched, setIsBedtimeStoryFetched] = useState(false);
+
+  const enableQuery = true;
+
   const getAIPrompt = () => {
     if (enableQuery) {
-      return `generate ${story}. The main character is: ${name}, age: ${age}, gender: ${gender}. Here are the rules: 1. it must be a 370 word bedtime fairy tale. 2. Each different section should have a prompt at the end for novita-sdk to generate an image. 3. The prompt MUST begin with the phrase Generate an image`;
+      return `generate ${story}. The main character is: ${name}, age: ${age}, gender: ${gender}. Here are the rules: 1. it MUST be a 470 word bedtime fairy tale. 2.It MUST include a title and an image for the book 3.The generated image MUST come after the title 4. Each different section should have a prompt at the end for novita-sdk to generate an image. 5. The prompt MUST begin with the phrase Generate an image`;
     }
     return "";
   };
@@ -47,81 +32,74 @@ export default function StoryComponent({ content }: any) {
     prompt: getAIPrompt(),
   };
 
-  const { data, isFetched } = useQuery({
+  const {
+    data: storyData,
+    isFetched,
+    status,
+  } = useQuery({
     queryKey: ["bedtimeStory"],
-    queryFn: () => getBedtimeStory(queryOptions),
-    initialData: content,
-    enabled: enableQuery,
-  });
+    queryFn: async () => {
+      const data = await getBedtimeStory(queryOptions);
+      setIsBedtimeStoryFetched(true);
+      return data;
+    },
+    enabled: parsedAiPageDataFromLocalStorage.length === 0,
+    staleTime: Infinity,
+    select: (data) => {
+      const storyPages = data?.data.split("\n\n");
 
-  const fullContent = data?.data;
-
-  const singlePages = fullContent?.split("\n\nPrompt: ");
-  const aiGenerations = singlePages?.map((page: string) => {
-    return page.split("\n\n");
-  })[0];
-  const getPageData = () => {
-    let pageData = [];
-    for (let i = 0; i < aiGenerations?.length; i++) {
-      let slicedArr = aiGenerations?.splice(i, 2);
+      let pageData = [];
+      const titleAndImagedata = storyPages?.splice(0, 2);
       pageData.push({
-        pageNumber: i + 1,
-        storyText: slicedArr[0]?.includes("Generate")
-          ? slicedArr[1]
-          : slicedArr[0],
-        aiPrompt: slicedArr[1]?.includes("Generate")
-          ? slicedArr[1]
-          : slicedArr[0],
+        title: titleAndImagedata[0],
+        pageNumber: 0,
+        aiPrompt: titleAndImagedata[1],
         imageURL: "",
       });
-    }
-    return pageData;
-  };
-
-  const aiPageData = getPageData();
-
-  useEffect(() => {
-    if (
-      parsedAiPageDataFromLocalStorage?.length > 0 ||
-      (Boolean(parsedAiPageDataFromLocalStorage) === false &&
-        isFetched &&
-        allImagesReady)
-    ) {
-      setEnableCall(false);
-      setAiPageDataValue(parsedAiPageDataFromLocalStorage);
-      return;
-    }
-    if (aiPageData?.length > 0 && fullContent?.length > 0 && mounted) {
-      // Create an array of promises using map
-      const imagePromises = aiPageData.map((page) =>
-        getImages({ prompt: page.aiPrompt }),
-      );
-
-      Promise.all(imagePromises)
-        .then((images) => {
-          images.map((image, idx) => {
-            aiPageData[idx].imageURL = image[0];
-          });
-          localStorage.setItem("aiPageData", JSON.stringify(aiPageData));
-          return setAiPageDataValue(aiPageData);
-        })
-        .catch((error) => {
-          // Handle any errors here
-          console.error("Error fetching images:", error);
+      for (let i = 0; i < storyPages?.length; i++) {
+        let slicedArr = storyPages?.splice(i, 2);
+        pageData.push({
+          pageNumber: i + 1,
+          storyText: slicedArr[0]?.includes("Generate")
+            ? slicedArr[1]
+            : slicedArr[0],
+          aiPrompt: slicedArr[1]?.includes("Generate")
+            ? slicedArr[1]
+            : slicedArr[0],
+          imageURL: "",
         });
-    }
-    setMounted(true);
-  }, [aiPageData?.length, fullContent?.length]);
+      }
+      return pageData;
+    },
+  });
 
-  const allImagesReady =
-    aiPageDataValue.length > 0
-      ? aiPageDataValue?.every((page: PageDataType) => {
-          return page.imageURL.length > 0;
-        })
-      : false;
+  const {
+    data: imageAndStoryData,
+    isFetched: imageAndStoryDataFetched,
+    status: imageAndStoryDataStatus,
+  } = useQuery({
+    queryKey: ["getImages"],
+    queryFn: async () => {
+      const data = await getImages(storyData);
+      setIsBedtimeStoryFetched(false);
+      return data;
+    },
+    enabled: isBedtimeStoryFetched,
+    refetchOnWindowFocus: false,
+    staleTime: Infinity,
+    select: (data) => {
+      localStorage.setItem("aiPageData", JSON.stringify(data));
+      return data;
+    },
+  });
+
   const canDisplay =
-    (isFetched && allImagesReady) ||
-    parsedAiPageDataFromLocalStorage?.length > 0;
+    (imageAndStoryDataStatus === "success" &&
+      status === "success" &&
+      imageAndStoryDataFetched &&
+      isFetched) ||
+    parsedAiPageDataFromLocalStorage.length > 0;
+
   return (
     <AnimatePresence>
       {!canDisplay && (
@@ -141,7 +119,9 @@ export default function StoryComponent({ content }: any) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}>
-          <StoryBook content={aiPageDataValue} />
+          <StoryBook
+            content={imageAndStoryData || parsedAiPageDataFromLocalStorage}
+          />
         </motion.div>
       )}
     </AnimatePresence>
