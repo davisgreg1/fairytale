@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import ChildContextProvider from "@/contexts/childContext";
-import Provider from "@/contexts/sessionProvider";
 import ReactQueryProvider from "@/contexts/ReactQueryProvider";
+import SessionProvider from "@/components/SessionProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -12,20 +12,19 @@ export const metadata: Metadata = {
   description: "fAIry tale is a story by you, for you, with AI.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-
   return (
     <html lang="en">
       <body className={inter.className}>
-        <ReactQueryProvider>
-          <Provider>
+        <SessionProvider>
+          <ReactQueryProvider>
             <ChildContextProvider>{children}</ChildContextProvider>
-          </Provider>
-        </ReactQueryProvider>
+          </ReactQueryProvider>
+        </SessionProvider>
       </body>
     </html>
   );

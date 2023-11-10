@@ -1,3 +1,4 @@
 import getBedtimeStory from "../getBedtimeStory";
+import getImageForPage from "../getImageForPage";
 
-export { getBedtimeStory };
+export { getBedtimeStory, getImageForPage };

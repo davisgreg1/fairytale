@@ -34,7 +34,7 @@ const InputField = ({
         min={min}
         max={max}
         onChange={(e) => onChange(e)}
-        className="form-input px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500 transition duration-150 ease-in-out"
+        className="text-cyan-700 form-input px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500 transition duration-150 ease-in-out"
       />
     </motion.div>
   );
