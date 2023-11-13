@@ -14,7 +14,7 @@ import { ChildContext } from "@/contexts/childContext";
 interface PagePropsType {
   storyText: string;
   aiPrompt: string;
-  pageNumber: number;
+  pageNumber: string;
   imageURL: string;
   title?: string;
 }
@@ -84,8 +84,9 @@ export default function StoryBook(content: StoryBookProps) {
         </div>
       </PageCover>
       {aiPageData.map((page) => {
+        const pageNumber = +page.pageNumber.split(" ")[1];
         return (
-          <Page key={page.pageNumber} number={page.pageNumber + 1}>
+          <Page key={page.pageNumber} number={pageNumber}>
             <div
               className={`flex justify-center items-center relative w-full mobile:h-48 desktop:h-96`}>
               <Image
@@ -94,7 +95,10 @@ export default function StoryBook(content: StoryBookProps) {
                 fill={true}
               />
             </div>
-            <div className={`pt-2 mobile:text-xs tablet:text-sm desktop:text-2xl`}>{page.storyText}</div>
+            <div
+              className={`pt-2 mobile:text-xs tablet:text-sm desktop:text-2xl`}>
+              {pageNumber === 0 ? "" : page.storyText}
+            </div>
           </Page>
         );
       })}

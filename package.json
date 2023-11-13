@@ -27,6 +27,7 @@
     "react-icons": "^4.11.0",
     "react-pageflip": "^2.0.3",
     "react-range-slider-input": "^3.0.7",
+    "react-top-loading-bar": "^2.3.1",
     "window-or-global": "^1.0.1"
   },
   "devDependencies": {

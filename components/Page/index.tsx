@@ -9,25 +9,26 @@ const Page = React.forwardRef<
   HTMLDivElement,
   React.PropsWithChildren<PagePropsType>
 >((props, ref) => {
-  const evenPage = props.number % 2 === 0;
+  const { number, children } = props;
+  const evenPage = number % 2 === 0;
   return (
     <div
       className={cx({
         page: true,
-        "page-even": evenPage,
-        "page-odd": !evenPage,
+        "page-even": !evenPage,
+        "page-odd": evenPage,
       })}
       ref={ref}>
       <div className="page-content">
         {/* <div className="page-image"></div> */}
-        <div className="page-text">{props.children}</div>
+        <div className="page-text">{children}</div>
         <div
           className={cx({
             "page-footer": true,
-            "page-footer-even": evenPage,
-            "page-footer-odd": !evenPage,
+            "page-footer-even": !evenPage,
+            "page-footer-odd": evenPage,
           })}>
-          {props.number}
+          {number === 0 ? '' : number}
         </div>
       </div>
     </div>

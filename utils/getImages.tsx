@@ -2,7 +2,7 @@ import { NovitaSDK } from "novita-sdk";
 
 export interface PageRes {
   title?: string;
-  pageNumber?: number;
+  pageNumber?: string;
   storyText?: string;
   aiPrompt?: string;
   imageURL?: string;
@@ -19,11 +19,9 @@ export default async function getImages(storyData?: PageRes[]) {
   const imagePromises = storyData.map(async (page) => {
     try {
       const params = {
-        model_name: "CounterfeitV30_v30.safetensors",
-        prompt: `(masterpiece, best quality),(illustration:1.2),(ultra-detailed:1.2),beautiful detailed eyes,
-              ${page.aiPrompt}, 
-              subject is black african, very dark skinned, brown. Setting is night time with full moon. MUST be in the style of Disney like characters.`,
-        negative_prompt: "EasyNegativeV2",
+        model_name: "sd_xl_base_1.0.safetensors",
+        prompt: `(masterpiece, best quality),(illustration:1.2),(ultra-detailed:1.2),beautiful detailed eyes,${page.aiPrompt}, subject is black african, very dark skinned, brown. Setting is night time with full moon. MUST BE VERY COLORFUL. MUST be in the style of Disney.`,
+        negative_prompt: "3d render, smooth,plastic, blurry, grainy, low-resolution,anime, deep-fried, oversaturated",
         width: 512,
         height: 512,
         sampler_name: "DPM++ 2M Karras",
