@@ -84,9 +84,9 @@ export default function StoryBook(content: StoryBookProps) {
         </div>
       </PageCover>
       {aiPageData.map((page) => {
-        const pageNumber = +page.pageNumber.split(" ")[1];
+        const pageNumber = +page.pageNumber.split(" ")[1].replace(`:`, "")[0];
         return (
-          <Page key={page.pageNumber} number={pageNumber}>
+          <Page key={page.pageNumber} number={+pageNumber}>
             <div
               className={`flex justify-center items-center relative w-full mobile:h-48 desktop:h-96`}>
               <Image
