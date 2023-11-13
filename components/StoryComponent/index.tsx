@@ -58,7 +58,7 @@ export default function StoryComponent() {
     queryKey: ["bedtimeStory"],
     queryFn: async () => {
       if (ref && ref.current) {
-        ref?.current?.continuousStart();
+        ref?.current?.continuousStart(0, 8500);
       }
       const data = await getBedtimeStory(queryOptions);
       setIsBedtimeStoryFetched(true);
