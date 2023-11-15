@@ -2,8 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
+html, body {
+  scroll-behavior: smooth;
+}
+
 body {
   height: 100vh;
+}
+
+input::placeholder {
+  opacity: 0.9;
+  color: lightblue;
 }
 
 .transformNone {

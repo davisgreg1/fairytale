@@ -22,10 +22,8 @@ const useImageGenerator = (arrayOfPrompts: PromptType) => {
       arrayOfPrompts.map(async (prompt) => {
         const params = {
           model_name: "CounterfeitV30_v30.safetensors",
-          prompt: `(masterpiece, best quality),(illustration:1.2),(ultra-detailed:1.2),beautiful detailed eyes,
-          ${prompt.aiPrompt}, 
-          subject is black african, very dark skinned, brown. Setting is night time with full moon`,
-          negative_prompt: "EasyNegativeV2",
+          prompt: `(masterpiece, best quality),(illustration:1.2),(ultra-detailed:1.2),Generate a vibrant and imaginative image that is suitable for children aged 12 and under. The image should be colorful, friendly, and engaging, capturing a sense of wonder and adventure. Avoid any themes of violence, fear, or danger. Instead, focus on depicting a cheerful and safe environment, whether it's a natural landscape, a cityscape, or a fantastical setting. Ensure that any characters in the image are portrayed in a positive and non-threatening manner, with friendly expressions and non-aggressive poses. The overall tone of the image should be uplifting, inspiring, and appropriate for a young audience. ${prompt.aiPrompt}, image is of a black african, very dark skinned, brown. Setting is night time with full moon`,
+          negative_prompt: "adult, poor quality, skin, bad hands, bad face, bad fingers",
           width: 512,
           height: 512,
           sampler_name: "DPM++ 2M Karras",
