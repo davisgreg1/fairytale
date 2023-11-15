@@ -402,7 +402,7 @@ const StoryDetailComp = () => {
                       ? `a ${gender.toLowerCase()}`
                       : "the child"
                   } who saved Christmas.`}
-                  className="form-textarea hover:placeholder-black mobile:text-4xl tablet:text-5xl desktop:text-5xl text-cyan-200 font-thin text-center bg-transparent border-b-2 border-none focus:outline-none .placeHolderName p-4"
+                  className="form-textarea hover:placeholder-black mobile:text-3xl tablet:text-4xl desktop:text-5xl text-cyan-200 font-thin text-center bg-transparent border-b-2 border-none focus:outline-none .placeHolderName p-4 w-auto"
                 />
               </motion.div>
             </div>
