@@ -9,7 +9,7 @@ type ChildContextType = {
 type ChildContextProviderType = {
   name: string;
   setName: (name: string) => void;
-  gender: string;
+  gender: "Boy" | "Girl" | "Neutral";
   setGender: (gender: string) => void;
   age: number | string;
   setAge: (age: number) => void;

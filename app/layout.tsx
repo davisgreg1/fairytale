@@ -4,12 +4,16 @@ import "./globals.css";
 import ChildContextProvider from "@/contexts/childContext";
 import ReactQueryProvider from "@/contexts/ReactQueryProvider";
 import SessionProvider from "@/components/SessionProvider";
+import AppParallaxProvider from "@/contexts/AppParallaxProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "fAIry tale",
   description: "fAIry tale is a story by you, for you, with AI.",
+  icons: {
+    icon: "/images/fairyTaleLogo.png",
+  },
 };
 
 export default async function RootLayout({
@@ -22,7 +26,9 @@ export default async function RootLayout({
       <body className={inter.className}>
         <SessionProvider>
           <ReactQueryProvider>
-            <ChildContextProvider>{children}</ChildContextProvider>
+            <AppParallaxProvider>
+              <ChildContextProvider>{children}</ChildContextProvider>
+            </AppParallaxProvider>
           </ReactQueryProvider>
         </SessionProvider>
       </body>
