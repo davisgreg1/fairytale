@@ -1,4 +1,5 @@
 import StoryComponent from "@/components/StoryComponent";
+import TopNav from "@/components/TopNav";
 import { getBedtimeStory } from "@/server/actions";
 import {
   dehydrate,
@@ -20,6 +21,7 @@ export default async function Story() {
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <HydrationBoundary state={dehydrate(queryClient)}>
+        <TopNav />
         <StoryComponent />
       </HydrationBoundary>
     </Suspense>

@@ -1,5 +1,9 @@
 "use client";
 import React, { useContext, useEffect, useRef, useState } from "react";
+import { Formik, Form, Field, ErrorMessage, useFormik } from "formik";
+import * as Yup from "yup";
+import Slider from "@mui/material/Slider";
+import Box from "@mui/material/Box";
 import { useRouter } from "next/navigation";
 import { signIn, useSession, signOut } from "next-auth/react";
 import { BannerLayer, ParallaxBanner } from "react-scroll-parallax";
@@ -10,41 +14,86 @@ import { localStorage } from "@/utils/localStorage";
 import capitalizedFirstName from "@/utils/capitalizedFirstName";
 import { motion } from "framer-motion";
 import GetStartedAnimation from "@/components/GetStartedAnimation";
-import RadioOptions from "@/components/RadioOptions";
-import RangeSlider from "react-range-slider-input";
-import "react-range-slider-input/dist/style.css";
 import { ChildContext } from "@/contexts/childContext";
 import "../../app/globals.css";
 
 const StoryDetailComp = () => {
   const router = useRouter();
-  const inputRef = useRef<HTMLInputElement>(null);
-  const { ref: inViewRef1, inView: firstSectionInView } = useInView({
-    threshold: 1,
-  });
-  const { ref: inViewRef2, inView: secondSectionInView } = useInView({
-    threshold: 1,
-  });
-  const { ref: inViewRef3, inView: thirdSectionInView } = useInView({
-    threshold: 1,
-  });
-  const { ref: inViewRef4, inView: fourthSectionInView } = useInView({
-    threshold: 1,
-  });
-  const { ref: inViewRef5, inView: fifthSectionInView } = useInView({
-    threshold: 1,
-  });
+  const nameRef = useRef<HTMLInputElement>(null);
+  const genderRef = useRef<HTMLDivElement>(null);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
-  const { age, setAge, name, setName, gender, setStory, story } =
+  const { ref: inViewRefName, inView: nameSectionInView } = useInView({
+    threshold: 1,
+  });
+
+  const { ref: inViewRefAge, inView: ageSectionInView } = useInView({
+    threshold: 1,
+  });
+
+  const { ref: inViewRefGender, inView: genderSectionInView } = useInView({
+    threshold: 0.8,
+  });
+  const { ref: inViewRefStory, inView: storySectionInView } = useInView({
+    threshold: 0.8,
+  });
+  const { ref: inViewRefSubmit, inView: submitSectionInView } = useInView({
+    threshold: 1,
+  });
+
+  const { age, setAge, name, setName, setGender, gender, setStory, story } =
     useContext(ChildContext);
   const { status, data: session } = useSession();
   const [widthD, heightD] = useWindowSize();
   const sessionAvailable = status === "authenticated";
+  const radioOptions = ["Boy", "Girl", "Neutral"];
 
   const [width, setWidth] = useState(300);
   const [value, setValue] = useState([1, age]);
+  const [scrollingToErrors, setScrollingToErrors] = useState(false);
 
+  const nameRegEx = /^[A-Za-zÀ-ÖØ-öø-ÿ-']+(?:[ -][A-Za-zÀ-ÖØ-öø-ÿ-']+)*$/;
+
+  const nameValidationSchema = Yup.object().shape({
+    name: Yup.string()
+      .required("Name is required.")
+      .min(2, "Name must be at least 2 characters.")
+      .max(50, "Name must not exceed 50 characters.")
+      .matches(nameRegEx, "Name must be alphabetic.")
+
+      .trim(),
+    gender: Yup.string()
+      .required("Selecting a gender is required.")
+      .oneOf(["Boy", "Girl", "Neutral"], "Invalid selection."),
+    story: Yup.string()
+      .min(10, "At least 10 characters.")
+      .max(140, "140 characters or less.")
+      .trim()
+      .required("Fairy tale is required."),
+  });
+
+  const formik = useFormik({
+    initialValues: {
+      name: name || "",
+      age: age || 1,
+      gender: gender || "",
+      story: story.length >= 30 ? story : `A story about `,
+    },
+    validationSchema: nameValidationSchema,
+    // validateOnChange: true,
+    // validateOnBlur: true,
+    onSubmit: (values) => {
+      alert(JSON.stringify(values, null, 2));
+    },
+  });
+
+  const { handleChange, errors, dirty, setFieldError, values, isValid } =
+    formik;
+  const isNameFieldValid = nameValidationSchema.isValidSync({
+    name,
+    gender,
+    story,
+  });
   // const activeElement = useActiveElement();
 
   // const [removeEllipsis, setRemoveEllipsis] = useState(false);
@@ -63,15 +112,11 @@ const StoryDetailComp = () => {
   const isTablet = widthD >= 720 && widthD < 1140;
   const isDesktop = widthD >= 1140;
 
-  const handleOnClick = (method: string) => signIn(method);
-  const handleSignOut = () => {
-    localStorage.clear();
-    signOut();
-  };
-
-  const handleNavigation = () => {
-    sessionAvailable ? router.push("/story") : router.push("/signin");
-  };
+  // const handleOnClick = (method: string) => signIn(method);
+  // const handleSignOut = () => {
+  //   localStorage.clear();
+  //   signOut();
+  // };
 
   // Function to handle scrolling
   // const handleScroll = () => {
@@ -112,78 +157,138 @@ const StoryDetailComp = () => {
   //   [inViewRef],
   // );
 
+  useEffect(() => {
+    if (
+      storySectionInView &&
+      (values.story === "A story about " || !values.story) &&
+      !scrollingToErrors
+    ) {
+      const textAreaElement = textAreaRef?.current;
+      if (textAreaElement) {
+        textAreaElement.focus();
+
+        const length = textAreaElement.value.length;
+        textAreaElement.setSelectionRange(length, length);
+      }
+    } else {
+      const textAreaElement = textAreaRef?.current;
+      if (textAreaElement) {
+        textAreaElement.blur();
+      }
+    }
+  }, [storySectionInView, setScrollingToErrors]);
+
+  useEffect(() => {
+    if (!values.gender && genderSectionInView) {
+      setFieldError("gender", "Gender is required.");
+    }
+  }, [genderSectionInView]);
+
   // useEffect(() => {
   //   if (activeElement === textAreaRef.current) {
   //     setRemoveEllipsis(true);
   //   }
   // }, [activeElement, removeEllipsis]);
 
-  useEffect(() => {
-    if (firstSectionInView) {
-      const firstSection = document.getElementById("firstSection");
-      if (firstSection) {
-        scrollElementIntoView(firstSection);
-      }
-    }
-    if (secondSectionInView) {
-      const secondSection = document.getElementById("secondSection");
-      if (secondSection) {
-        scrollElementIntoView(secondSection);
-      }
-    }
-    if (thirdSectionInView) {
-      const thirdSection = document.getElementById("thirdSection");
-      if (thirdSection) {
-        scrollElementIntoView(thirdSection);
-      }
-    }
+  // useEffect(() => {
+  //   if (nameSectionInView) {
+  //     const nameSection = document.getElementById("nameSection");
+  //     if (nameSection) {
+  //       scrollElementIntoView(nameSection);
+  //     }
+  //   }
+  //   if (ageSectionInView) {
+  //     const ageSection = document.getElementById("ageSection");
+  //     if (ageSection) {
+  //       scrollElementIntoView(ageSection);
+  //     }
+  //   }
+  //   if (genderSectionInView) {
+  //     const genderSection = document.getElementById("genderSection");
+  //     if (genderSection) {
+  //       scrollElementIntoView(genderSection);
+  //     }
+  //   }
 
-    if (fourthSectionInView) {
-      const fourthSection = document.getElementById("fourthSection");
-      if (fourthSection) {
-        scrollElementIntoView(fourthSection);
-      }
-    }
+  //   if (storySectionInView) {
+  //     const storySection = document.getElementById("storySection");
+  //     if (storySection) {
+  //       scrollElementIntoView(storySection);
+  //     }
+  //   }
 
-    if (fifthSectionInView) {
-      const fifthSection = document.getElementById("fifthSection");
-      if (fifthSection) {
-        scrollElementIntoView(fifthSection);
-      }
-    }
-  }, [
-    firstSectionInView,
-    secondSectionInView,
-    thirdSectionInView,
-    fourthSectionInView,
-    fifthSectionInView,
-  ]);
+  //   if (submitSectionInView) {
+  //     const submitSection = document.getElementById("submitSection");
+  //     if (submitSection) {
+  //       scrollElementIntoView(submitSection);
+  //     }
+  //   }
+  // }, [
+  //   nameSectionInView,
+  //   ageSectionInView,
+  //   genderSectionInView,
+  //   storySectionInView,
+  //   submitSectionInView,
+  // ]);
 
-  const scrollElementIntoView = (element: HTMLElement) => {
-    element.scrollIntoView({
-      behavior: "smooth",
-      block: "center",
-      inline: "nearest",
-    });
-  };
+  // const scrollElementIntoView = (element: HTMLElement) => {
+  //   element.scrollIntoView({
+  //     behavior: "smooth",
+  //     block: "center",
+  //     inline: "nearest",
+  //   });
+  // };
 
-  const handleRangeSliderOnChange = (e: [number, number]) => {
-    setValue(e);
-    setAge(e[1]);
-    localStorage.setItem("childAge", e[1].toString());
-  };
-
-  const handleOnNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setName(e.target.value);
-    localStorage.setItem("childName", e.target.value);
-  };
-
-  const handleOnTextAreaChange = (
-    e: React.ChangeEvent<HTMLTextAreaElement>,
-  ) => {
-    setStory(e.target.value);
-    localStorage.setItem("childStory", e.target.value);
-  };
+  const marks = [
+    {
+      value: 1,
+      label: <span className="text-cyan-200 font-thin text-xl">{"1"}</span>,
+    },
+    {
+      value: 2,
+      label: <span className="text-cyan-200 font-thin text-xl">{"2"}</span>,
+    },
+    {
+      value: 3,
+      label: <span className="text-cyan-200 font-thin text-xl">{"3"}</span>,
+    },
+    {
+      value: 4,
+      label: <span className="text-cyan-200 font-thin text-xl">{"4"}</span>,
+    },
+    {
+      value: 5,
+      label: <span className="text-cyan-200 font-thin text-xl">{"5"}</span>,
+    },
+    {
+      value: 6,
+      label: <span className="text-cyan-200 font-thin text-xl">{"6"}</span>,
+    },
+    {
+      value: 7,
+      label: <span className="text-cyan-200 font-thin text-xl">{"7"}</span>,
+    },
+    {
+      value: 8,
+      label: <span className="text-cyan-200 font-thin text-xl">{"8"}</span>,
+    },
+    {
+      value: 9,
+      label: <span className="text-cyan-200 font-thin text-xl">{"9"}</span>,
+    },
+    {
+      value: 10,
+      label: <span className="text-cyan-200 font-thin text-xl">{"10"}</span>,
+    },
+    {
+      value: 11,
+      label: <span className="text-cyan-200 font-thin text-xl">{"11"}</span>,
+    },
+    {
+      value: 12,
+      label: <span className="text-cyan-200 font-thin text-xl">{"12"}</span>,
+    },
+  ];
 
   const background: BannerLayer = {
     /**
@@ -247,7 +352,7 @@ const StoryDetailComp = () => {
     expanded: false,
     children: (
       <div className="absolute inset-0 flex items-center justify-center">
-        <h1 className="mobile:text-4xl tablet:text-6xl desktop:text-6xl text-white font-thin text-center">
+        <h1 className="mobile:text-4xl tablet:text-6xl desktop:text-6xl text-white font-thin text-center mx-4">
           {name
             ? `What is ${capitalizedFirstName(name)}'s Gender?`
             : `What Is Your Little Creator's?`}
@@ -280,7 +385,11 @@ const StoryDetailComp = () => {
     children: (
       <div className="absolute inset-0 flex items-center justify-center">
         <h1 className="mobile:text-4xl tablet:text-6xl desktop:text-6xl text-white font-thin">
-          {`Let's go, ${capitalizedFirstName(name)}!`}
+          {`${
+            isValid && values.story !== "A story about "
+              ? `Let's go, ${capitalizedFirstName(name)}!`
+              : `Fill in the details.`
+          }`}
         </h1>
       </div>
     ),
@@ -307,55 +416,162 @@ const StoryDetailComp = () => {
     ),
   };
 
+  const customHandleNameChange = (event: any) => {
+    handleChange(event);
+
+    localStorage.setItem("childName", event.target.value);
+    setName(event.target.value);
+  };
+
+  const customHandleAgeChange = (event: any) => {
+    handleChange(event);
+
+    localStorage.setItem("childAge", event.target.value);
+    setAge(event.target.value);
+  };
+
+  const customHandleGenderChange = (event: any) => {
+    handleChange(event);
+
+    localStorage.setItem("childGender", event.target.value);
+    setGender(event.target.value);
+  };
+
+  const customHandleStoryChange = (event: any) => {
+    handleChange(event);
+
+    localStorage.setItem("childStory", event.target.value);
+    setStory(event.target.value);
+  };
+
+  const handleNavigation = () => {
+    if (!values.name) {
+      setScrollingToErrors(true);
+      nameRef?.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+        inline: "nearest",
+      });
+      nameRef?.current?.focus();
+      setFieldError("name", "Name is required.");
+    } else if (!values.gender) {
+      setScrollingToErrors(true);
+      genderRef?.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+        inline: "nearest",
+      });
+    } else if (values.story === "A story about " || !values.story) {
+      setScrollingToErrors(false);
+      textAreaRef?.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+        inline: "nearest",
+      });
+      const textAreaElement = textAreaRef?.current;
+      if (textAreaElement) {
+        textAreaElement.focus();
+
+        const length = textAreaElement.value.length;
+        textAreaElement.setSelectionRange(length, length);
+      }
+
+      setFieldError("story", "Fairy Tale is required.");
+    } else {
+      sessionAvailable ? router.push("/story") : router.push("/signin");
+    }
+  };
+
+  const hasErrors =
+    !values.name ||
+    !values.gender ||
+    values.story === "A story about " ||
+    !values.story;
+
+  const determineErrorSection = () => {
+    if (!values.name) {
+      return "name.";
+    } else if (!values.gender) {
+      return "gender.";
+    } else if (values.story === "A story about " || !values.story) {
+      return "fairy tale.";
+    }
+  };
+
   return (
-    <div>
-      {/* What's the child's name */}
-      <section ref={inViewRef1} id="firstSection">
+    <form onSubmit={formik.handleSubmit}>
+      {/* What's the child's name formik */}
+      <section ref={inViewRefName} id="nameSection">
         <ParallaxBanner
           layers={[background, childsNameHeadline, foreground, gradientOverlay]}
           className="aspect-[2/1] bg-gray-900 h-screen ">
-          <motion.div className="m-auto relative top-[45%] flex justify-center items-center">
+          <motion.div className="m-auto mobile:max-tablet:mt-4 relative top-[45%] flex justify-center items-center flex-col">
             <motion.input
-              ref={inputRef}
-              onChange={handleOnNameChange}
+              name="name"
+              id="name"
+              ref={nameRef}
+              maxLength={51}
+              onChange={customHandleNameChange}
+              value={formik.values.name}
               type="text"
-              defaultValue={name}
               placeholder="Type Name"
-              className="hover:placeholder-black mobile:text-4xl tablet:text-5xl desktop:text-5xl text-cyan-200 font-thin text-center bg-transparent border-b-2 border-white .placeHolderName"
+              className={`hover:placeholder-black shadow-2xl mobile:text-4xl tablet:text-5xl desktop:text-5xl text-cyan-200 font-thin text-center bg-transparent border-b-2 ${
+                errors.name
+                  ? "border-red-500 shadow-inner shadow-red-500"
+                  : "border-white"
+              } placeHolderName`}
               style={{ width: `${width}px` }}
               animate={{ width: `${width}px` }}
               transition={{ type: "just", stiffness: 500 }}
+              // ... other props
             />
+            {errors.name && (
+              <div className="text-red-500 font-bold text-center text-xl m-4">
+                {errors.name}
+              </div>
+            )}
           </motion.div>
         </ParallaxBanner>
       </section>
-      {/* What age */}
-      <section ref={inViewRef2} id="secondSection">
+      {/* What age formik*/}
+      <section ref={inViewRefAge} id="ageSection">
         <ParallaxBanner
           layers={[background, childsAgeHeadline, foreground, gradientOverlay]}
           className="aspect-[2/1] bg-gray-900 h-screen ">
-          <motion.div className="m-auto relative top-1/2 flex justify-center items-center flex-col w-64">
+          <motion.div className="m-auto relative top-1/2 flex justify-center items-center flex-col w-full">
             <div className="w-max pb-16 mobile:text-4xl tablet:text-5xl desktop:text-5xl text-cyan-200 font-thin text-center">
               {age}{" "}
               <span className="whitespace-nowrap">{`Year${
                 age === 1 ? "" : "s"
               } old`}</span>
             </div>
-            <RangeSlider
-              onInput={handleRangeSliderOnChange}
-              value={value}
-              className="single-thumb opacity-50"
-              defaultValue={[1, age]}
-              thumbsDisabled={[true, false]}
-              rangeSlideDisabled={false}
-              min={1}
-              max={12}
-            />
+            <div className="mx-4 w-11/12">
+              <Box
+                sx={{
+                  boxShadow: 10,
+                  borderRadius: 2,
+                  p: 2,
+                  minWidth: 310,
+                  width: "100%",
+                  display: "flex",
+                }}>
+                <Slider
+                  size="medium"
+                  aria-label="age of child"
+                  defaultValue={+age || 1}
+                  marks={marks}
+                  max={12}
+                  min={1}
+                  onChange={customHandleAgeChange}
+                  name="age"
+                />
+              </Box>
+            </div>
           </motion.div>
         </ParallaxBanner>
       </section>
-      {/* What is the gender */}
-      <section ref={inViewRef3} id="thirdSection">
+      {/* What is the gender formik */}
+      <section ref={inViewRefGender} id="genderSection">
         <ParallaxBanner
           layers={[
             background,
@@ -364,15 +580,40 @@ const StoryDetailComp = () => {
             gradientOverlay,
           ]}
           className="aspect-[2/1] bg-gray-900 h-screen ">
-          <motion.div className="m-auto relative top-1/2 flex justify-center items-center flex-col w-64">
+          <motion.div
+            ref={genderRef}
+            className="m-auto relative top-1/2 flex justify-center items-center flex-col w-64">
             <div className="w-max pb-16 mobile:text-4xl tablet:text-5xl desktop:text-5xl text-cyan-200 font-thin text-center">
-              <RadioOptions />
+              <div className="flex mr-4">
+                {radioOptions.map((option) => (
+                  <motion.label
+                    key={option}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    className="flex items-center justify-center flex-row">
+                    <motion.input
+                      type="radio"
+                      name={"gender"}
+                      value={option}
+                      onChange={customHandleGenderChange}
+                      checked={formik.values.gender === option}
+                      className="m-4"
+                    />
+                    {option}
+                  </motion.label>
+                ))}
+              </div>
+              {genderSectionInView && !formik.values.gender && (
+                <div className="text-red-500 font-bold text-center text-xl m-4">
+                  {errors.gender}
+                </div>
+              )}
             </div>
           </motion.div>
         </ParallaxBanner>
       </section>
       {/* What is the story */}
-      <section ref={inViewRef4} id="fourthSection">
+      <section ref={inViewRefStory} id="storySection">
         <ParallaxBanner
           layers={[
             background,
@@ -391,41 +632,57 @@ const StoryDetailComp = () => {
                 <textarea
                   ref={textAreaRef}
                   defaultValue={story.length >= 30 ? story : `A story about `}
-                  onChange={handleOnTextAreaChange}
-                  name="storyDetails"
+                  onChange={customHandleStoryChange}
+                  name="story"
                   rows={4}
                   required={true}
-                  minLength={1}
-                  maxLength={200}
+                  minLength={10}
+                  maxLength={140}
                   placeholder={`Example: A story about ${
                     gender === "Boy" || gender === "Girl"
                       ? `a ${gender.toLowerCase()}`
                       : "the child"
                   } who saved Christmas.`}
-                  className="form-textarea hover:placeholder-black mobile:text-3xl tablet:text-4xl desktop:text-5xl text-cyan-200 font-thin text-center bg-transparent border-b-2 border-none focus:outline-none .placeHolderName p-4 w-auto"
+                  className={`form-textarea hover:placeholder-black mobile:text-3xl tablet:text-4xl desktop:text-5xl text-cyan-200 font-thin text-center bg-transparent border-b-2 border-none focus:outline-none .placeHolderName p-4 w-auto ${
+                    errors.story
+                      ? "border-red-500 shadow-inner drop-shadow-2xl border-8 shadow-red-500"
+                      : ""
+                  } `}
                 />
               </motion.div>
+              {errors.story && (
+                <div className="text-red-500 font-bold text-center text-xl m-4 pt-4 relative bottom-[100px]">
+                  {errors.story}
+                </div>
+              )}
             </div>
           </motion.div>
         </ParallaxBanner>
       </section>
       {/* Let's go! */}
-      <section ref={inViewRef5} id="fifthSection">
+      <section ref={inViewRefSubmit} id="submitSection">
         <ParallaxBanner
           layers={[backgroundFull, getStartedHeadline, foreground]}
           className="aspect-[2/1] bg-black h-screen ">
-          <div className="w-36 h-36 m-auto relative top-1/2">
+          <div className="w-36 h-36 m-auto relative top-1/2 flex flex-col justify-center items-center">
             <button
               onClick={handleNavigation}
               type="button"
               title="Get Started Button"
-              className="cursor-pointer select-none">
+              className={`top-11 relative cursor-pointer select-none ${
+                hasErrors ? `-rotate-90` : ``
+              }`}>
               <GetStartedAnimation />
             </button>
+            {hasErrors ? (
+              <div className="mt-4 text-md text-gray-600 italic whitespace-nowrap">
+                {`Click to go to ${determineErrorSection()}`}
+              </div>
+            ) : null}
           </div>
         </ParallaxBanner>
       </section>
-    </div>
+    </form>
   );
 };
 
