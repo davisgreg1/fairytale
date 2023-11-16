@@ -138,8 +138,6 @@ export default function StoryBook(content: StoryBookProps) {
             <PageCover>THE END</PageCover>
           </HTMLFlipBook>
           <div className="relative bottom-0 mx-4 flex">
-            {/* <div className="fixed inset-0 bg-black opacity-50 z-10 absolute"></div> */}
-
             {page === 0 ? null : (
               <span onClick={prevButtonClick}>
                 <PreviousAnimation />

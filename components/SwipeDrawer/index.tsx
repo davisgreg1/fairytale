@@ -22,6 +22,8 @@ export default function SwipeDrawer() {
 
   const isStoryPage = currentPage?.includes("/story");
 
+  const handleOnNavigateHome = () => router.push("/");
+
   const handleOnAuthClick = async () => {
     if (authenticated) {
       await signOut({
@@ -57,7 +59,7 @@ export default function SwipeDrawer() {
       onKeyDown={toggleDrawer(false)}>
       <List>
         {["Home"].map((text, index) => (
-          <ListItem key={text} disablePadding>
+          <ListItem key={text} disablePadding onClick={handleOnNavigateHome}>
             <ListItemButton>
               <ListItemIcon>
                 <FcHome size="1rem" />
