@@ -5,9 +5,11 @@ import ChildMainScreen from "@/components/ChildMainScreen";
 
 const Intro = () => {
   return (
-    <AnimatePresence>
-      <ChildMainScreen />
-    </AnimatePresence>
+    <div id="page-wrap">
+      <AnimatePresence>
+        <ChildMainScreen />
+      </AnimatePresence>
+    </div>
   );
 };
 

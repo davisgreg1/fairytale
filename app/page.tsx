@@ -1,10 +1,11 @@
 import Intro from "@/components/Intro";
+import TopNav from "@/components/TopNav";
 
 export default function Home() {
   return (
+    <div id="outer-container">
+      <TopNav />
       <Intro />
-    // <main className="flex">
-    // {/* <main className="flex min-h-screen flex-col items-center justify-between bg-gradient-to-t from-blue-900 via-purple-700 to-blue-500"> */}
-    // </main>
+    </div>
   );
 }
