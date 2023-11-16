@@ -47,6 +47,7 @@ const StoryDetailComp = () => {
   const [widthD, heightD] = useWindowSize();
   const sessionAvailable = status === "authenticated";
   const radioOptions = ["Boy", "Girl", "Neutral"];
+  const defaultStoryText = `A story about... `;
 
   const [width, setWidth] = useState(300);
   const [value, setValue] = useState([1, age]);
@@ -77,7 +78,7 @@ const StoryDetailComp = () => {
       name: name || "",
       age: age || 1,
       gender: gender || "",
-      story: story.length >= 30 ? story : `A story about `,
+      story: story.length >= 30 ? story : defaultStoryText,
     },
     validationSchema: nameValidationSchema,
     // validateOnChange: true,
@@ -157,26 +158,26 @@ const StoryDetailComp = () => {
   //   [inViewRef],
   // );
 
-  useEffect(() => {
-    if (
-      storySectionInView &&
-      (values.story === "A story about " || !values.story) &&
-      !scrollingToErrors
-    ) {
-      const textAreaElement = textAreaRef?.current;
-      if (textAreaElement) {
-        textAreaElement.focus();
+  // useEffect(() => {
+  //   if (
+  //     storySectionInView &&
+  //     (values.story === "A story about " || !values.story) &&
+  //     !scrollingToErrors
+  //   ) {
+  //     const textAreaElement = textAreaRef?.current;
+  //     if (textAreaElement) {
+  //       textAreaElement.focus();
 
-        const length = textAreaElement.value.length;
-        textAreaElement.setSelectionRange(length, length);
-      }
-    } else {
-      const textAreaElement = textAreaRef?.current;
-      if (textAreaElement) {
-        textAreaElement.blur();
-      }
-    }
-  }, [storySectionInView, setScrollingToErrors]);
+  //       const length = textAreaElement.value.length;
+  //       textAreaElement.setSelectionRange(length, length);
+  //     }
+  //   } else {
+  //     const textAreaElement = textAreaRef?.current;
+  //     if (textAreaElement) {
+  //       textAreaElement.blur();
+  //     }
+  //   }
+  // }, [storySectionInView, setScrollingToErrors]);
 
   useEffect(() => {
     if (!values.gender && genderSectionInView) {
@@ -386,7 +387,7 @@ const StoryDetailComp = () => {
       <div className="absolute inset-0 flex items-center justify-center">
         <h1 className="mobile:text-4xl tablet:text-6xl desktop:text-6xl text-white font-thin">
           {`${
-            isValid && values.story !== "A story about "
+            isValid && values.story !== defaultStoryText
               ? `Let's go, ${capitalizedFirstName(name)}!`
               : `Fill in the details.`
           }`}
@@ -461,7 +462,7 @@ const StoryDetailComp = () => {
         block: "center",
         inline: "nearest",
       });
-    } else if (values.story === "A story about " || !values.story) {
+    } else if (values.story === defaultStoryText || !values.story) {
       setScrollingToErrors(false);
       textAreaRef?.current?.scrollIntoView({
         behavior: "smooth",
@@ -485,7 +486,7 @@ const StoryDetailComp = () => {
   const hasErrors =
     !values.name ||
     !values.gender ||
-    values.story === "A story about " ||
+    values.story === defaultStoryText ||
     !values.story;
 
   const determineErrorSection = () => {
@@ -493,7 +494,7 @@ const StoryDetailComp = () => {
       return "name.";
     } else if (!values.gender) {
       return "gender.";
-    } else if (values.story === "A story about " || !values.story) {
+    } else if (values.story === defaultStoryText || !values.story) {
       return "fairy tale.";
     }
   };
@@ -631,7 +632,7 @@ const StoryDetailComp = () => {
                 className="flex items-center flex-col justify-center w-[350px] h-96 tablet:w-[500px] desktop:w-[777px]">
                 <textarea
                   ref={textAreaRef}
-                  defaultValue={story.length >= 30 ? story : `A story about `}
+                  defaultValue={story.length >= 30 ? story : defaultStoryText}
                   onChange={customHandleStoryChange}
                   name="story"
                   rows={4}
