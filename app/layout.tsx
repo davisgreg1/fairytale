@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/react";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import ChildContextProvider from "@/contexts/childContext";
@@ -27,7 +28,10 @@ export default async function RootLayout({
         <SessionProvider>
           <ReactQueryProvider>
             <AppParallaxProvider>
-              <ChildContextProvider>{children}</ChildContextProvider>
+              <ChildContextProvider>
+                {children}
+                <Analytics />
+              </ChildContextProvider>
             </AppParallaxProvider>
           </ReactQueryProvider>
         </SessionProvider>
