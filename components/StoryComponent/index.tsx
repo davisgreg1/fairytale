@@ -154,7 +154,7 @@ export default function StoryComponent() {
 
   return (
     <>
-      <LoadingBar color="#f11946" ref={ref} />
+      <LoadingBar color="#f11946" height={5} ref={ref} />
       <AnimatePresence>
         {!canDisplay && (
           <motion.div
