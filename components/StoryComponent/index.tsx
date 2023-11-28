@@ -145,6 +145,7 @@ export default function StoryComponent() {
       return data;
     },
   });
+
   const canDisplay =
     (imageAndStoryDataStatus === "success" &&
       status === "success" &&

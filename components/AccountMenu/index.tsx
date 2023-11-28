@@ -1,5 +1,5 @@
 import * as React from "react";
-// import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import Box from "@mui/material/Box";
 import Avatar from "@mui/material/Avatar";
 import Menu from "@mui/material/Menu";
@@ -12,7 +12,6 @@ import { FcGoogle, FcHome } from "react-icons/fc";
 import { signIn, useSession, signOut } from "next-auth/react";
 import { IoPersonCircle } from "react-icons/io5";
 import { localStorage } from "@/utils/localStorage";
-import { useRouter } from "next/navigation";
 
 export default function AccountMenu() {
   const { status, data: session } = useSession();
@@ -40,7 +39,7 @@ export default function AccountMenu() {
       });
       localStorage.clear();
     } else {
-      signIn("google");
+      router.push('/signin')
     }
   };
 
