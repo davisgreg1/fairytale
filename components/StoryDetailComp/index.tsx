@@ -305,11 +305,6 @@ const StoryDetailComp = () => {
   };
 
   const backgroundFull: BannerLayer = {
-    /**
-     * width: 1352px;
-    aspect-ratio: auto 1352 / 901;
-    height: 901px;
-     */
     image: "/images/starrySky.jpg",
     translateY: [0, 50],
     opacity: [1, 0.3],
@@ -397,11 +392,6 @@ const StoryDetailComp = () => {
   };
 
   const foreground: BannerLayer = {
-    /**
-     * width: 1352px;
-    aspect-ratio: auto 1352 / 901;
-    height: 901px;
-     */
     image: "/images/brownMountain.png",
     translateY: [0, 15],
     scale: [1, 1.1, "easeOutCubic"],

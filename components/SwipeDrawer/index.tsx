@@ -31,7 +31,7 @@ export default function SwipeDrawer() {
       });
       localStorage.clear();
     } else {
-      signIn("google");
+      router.push('/signin')
     }
   };
 

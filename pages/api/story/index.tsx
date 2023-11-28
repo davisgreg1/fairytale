@@ -36,7 +36,8 @@ const handler = async (req: Request): Promise<Response> => {
   };
 
   const stream = await OpenAIStream(payload);
-  return new Response(stream);
+  let result = new Response(stream);
+  return result;
 };
 
 export default handler;
