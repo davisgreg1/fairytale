@@ -1,15 +1,14 @@
 "use client";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { Formik, Form, Field, ErrorMessage, useFormik } from "formik";
+import { useFormik } from "formik";
 import * as Yup from "yup";
 import Slider from "@mui/material/Slider";
 import Box from "@mui/material/Box";
 import { useRouter } from "next/navigation";
-import { signIn, useSession, signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { BannerLayer, ParallaxBanner } from "react-scroll-parallax";
 import { useInView } from "react-intersection-observer";
 import { useWindowSize } from "@react-hook/window-size/throttled";
-// import { useActiveElement } from "@/hooks/useActiveElement";
 import { localStorage } from "@/utils/localStorage";
 import capitalizedFirstName from "@/utils/capitalizedFirstName";
 import { motion } from "framer-motion";
@@ -49,6 +48,7 @@ const StoryDetailComp = () => {
   const radioOptions = ["Boy", "Girl", "Neutral"];
   const defaultStoryText = `A story about... `;
 
+  const [backgroundColor, setBackgroundColor] = useState("transparent");
   const [width, setWidth] = useState(300);
   const [value, setValue] = useState([1, age]);
   const [scrollingToErrors, setScrollingToErrors] = useState(false);
@@ -184,6 +184,49 @@ const StoryDetailComp = () => {
       setFieldError("gender", "Gender is required.");
     }
   }, [genderSectionInView]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (nameSectionInView) {
+        const scrollY = window.scrollY;
+        const scrollThreshold = isMobile
+          ? window.innerHeight / 2 / 2 / 2
+          : window.innerHeight / 2 / 2; // Adjust this value as needed
+        const scrolled = scrollY / scrollThreshold; // Faster color change
+
+        const opacity = Math.min(1, Math.max(scrolled, 0));
+        const color = `rgba(99, 85, 85, ${opacity})`; // #635555 in rgba
+
+        setBackgroundColor(color);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [isMobile]);
+
+  // useEffect(() => {
+  //   const handleScroll = () => {
+  //     const scrollY = window.scrollY;
+  //     const windowHeight = window.innerHeight;
+  //     const scrolled = scrollY / windowHeight; // 0 at top, increases with scroll
+
+  //     // Ensure that the value is between 0 and 1
+  //     const opacity = Math.min(1, Math.max(scrolled, 0));
+
+  //     // Interpolate between transparent and your color
+  //     const color = `rgba(99, 85, 85, ${opacity})`; // #635555 in rgba
+
+  //     setBackgroundColor(color);
+  //   };
+
+  //   window.addEventListener('scroll', handleScroll);
+  //   return () => {
+  //     window.removeEventListener('scroll', handleScroll);
+  //   };
+  // }, []);
 
   // useEffect(() => {
   //   if (activeElement === textAreaRef.current) {
@@ -488,7 +531,7 @@ const StoryDetailComp = () => {
       return "fairy tale.";
     }
   };
-
+  // #635555
   return (
     <form onSubmit={formik.handleSubmit}>
       {/* What's the child's name formik */}
@@ -506,12 +549,12 @@ const StoryDetailComp = () => {
               value={formik.values.name}
               type="text"
               placeholder="Type Name"
-              className={`hover:placeholder-black shadow-2xl mobile:text-4xl tablet:text-5xl desktop:text-5xl text-cyan-200 font-thin text-center bg-transparent border-b-2 ${
+              className={`hover:placeholder-black shadow-2xl mobile:text-4xl tablet:text-5xl desktop:text-5xl shadow-cyan-400 text-cyan-200 font-thin text-center bg-transparent border-none transition-colors duration-300 ${
                 errors.name
                   ? "border-red-500 shadow-inner shadow-red-500"
                   : "border-white"
               } placeHolderName`}
-              style={{ width: `${width}px` }}
+              style={{ width: `${width}px`, backgroundColor: backgroundColor }}
               animate={{ width: `${width}px` }}
               transition={{ type: "just", stiffness: 500 }}
               // ... other props
@@ -622,19 +665,15 @@ const StoryDetailComp = () => {
                 className="flex items-center flex-col justify-center w-[350px] h-96 tablet:w-[500px] desktop:w-[777px]">
                 <textarea
                   ref={textAreaRef}
-                  defaultValue={story.length >= 30 ? story : defaultStoryText}
+                  defaultValue={story.length >= 30 ? story : ""}
                   onChange={customHandleStoryChange}
                   name="story"
                   rows={4}
                   required={true}
                   minLength={10}
                   maxLength={140}
-                  placeholder={`Example: A story about ${
-                    gender === "Boy" || gender === "Girl"
-                      ? `a ${gender.toLowerCase()}`
-                      : "the child"
-                  } who saved Christmas.`}
-                  className={`form-textarea hover:placeholder-black mobile:text-3xl tablet:text-4xl desktop:text-5xl text-cyan-200 font-thin text-center bg-transparent border-b-2 border-none focus:outline-none .placeHolderName p-4 w-auto ${
+                  placeholder={defaultStoryText}
+                  className={`placeholder:text-cyan-200 form-textarea hover:placeholder-cyan-100 mobile:text-3xl tablet:text-4xl desktop:text-5xl text-cyan-200 font-thin text-center bg-transparent border-b-2 border-none focus:outline-none .placeHolderName p-4 w-auto ${
                     errors.story
                       ? "border-red-500 shadow-inner drop-shadow-2xl border-8 shadow-red-500"
                       : ""
