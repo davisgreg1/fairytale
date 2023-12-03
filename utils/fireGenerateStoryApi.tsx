@@ -1,4 +1,3 @@
-// import prisma from "@/lib/prisma";
 // import { getTokens } from "@/lib/tokenizer";
 
 export default async function fireGenerateStoryApi(
@@ -53,18 +52,7 @@ export default async function fireGenerateStoryApi(
     const [results] = moderationData.results;
 
     if (results.flagged) {
-      // await prisma.user.update({
-      //   where: {
-      //     email: email,
-      //   },
-      //   data: {
-      //     banned: true,
-      //   },
-      // });
-      // return {
-      //   error:
-      //     "Your input has been flagged by the AI and you are banned. Do better.",
-      // };
+      console.log("flagged");
     } else {
       const data = await fetch(
         "https://api.openai.com/v1/chat/completions",
