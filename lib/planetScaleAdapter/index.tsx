@@ -113,7 +113,6 @@ export function PlanetScaleAdapter(
         )
         .leftJoin(users, eq(accounts.userId, users.id))
         .then((res) => res[0]);
-
       return dbAccount?.users;
     },
     deleteSession: async (sessionToken) => {
