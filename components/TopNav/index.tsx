@@ -1,14 +1,10 @@
 "use client";
 import { motion } from "framer-motion";
 import { usePathname } from "next/navigation";
-import { IoPersonCircle } from "react-icons/io5";
 import Image from "next/image";
 import Link from "next/link";
-import HamburgerMenu from "@/components/HamburgerMenu";
 import AccountMenu from "@/components/AccountMenu";
-import { localStorage } from "@/utils/localStorage";
 import styles from "./styles.module.css";
-import { signOut, signIn, useSession } from "next-auth/react";
 import SwipeDrawer from "@/components/SwipeDrawer";
 
 const linkVariants = {
@@ -24,7 +20,6 @@ const linkVariants = {
 };
 
 function TopNav() {
-  const { status, data: session } = useSession();
   let pathname = usePathname();
 
   if (pathname?.includes("/blog/")) {
