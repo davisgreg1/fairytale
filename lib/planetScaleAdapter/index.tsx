@@ -5,8 +5,8 @@ import {
   accounts,
   sessions,
   verificationTokens,
-} from "@/db/schema/auth";
-import { DBClient } from "@/db";
+} from "@/server/db/schema/auth";
+import { DBClient } from "@/server/db";
 import type { Adapter } from "@auth/core/adapters";
 
 export const defaultSchema = { users, accounts, sessions, verificationTokens };
