@@ -1,4 +1,4 @@
-import { db } from "@/db";
+import { db } from "@/server/db";
 import { PlanetScaleAdapter } from "@/lib/planetScaleAdapter";
 import { type GetServerSidePropsContext } from "next";
 import {

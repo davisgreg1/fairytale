@@ -6,9 +6,9 @@ if (!process.env.DATABASE_URL) {
 }
 
 export default {
-  schema: "./db/schema/auth.tsx",
+  schema: "./server/db/schema/auth.tsx",
+  out: "./server/drizzle",
   driver: "mysql2",
-  out: "./drizzle",
   dbCredentials: {
     connectionString: process.env.DATABASE_URL!,
   },
