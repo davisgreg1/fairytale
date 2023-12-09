@@ -11,7 +11,10 @@ import { Suspense } from "react";
 export default async function Story() {
   const queryClient = new QueryClient();
   const queryOptions = {
-    prompt: "",
+    story: '',
+    name: '',
+    age: '',
+    gender: ''
   };
   await queryClient.prefetchQuery({
     queryKey: ["bedTimeStory"],
