@@ -1,4 +1,3 @@
-"use server";
 import { NovitaSDK } from "novita-sdk";
 
 export interface PageRes {
@@ -20,9 +19,9 @@ export default async function getImages(storyData?: PageRes[]) {
   const imagePromises = storyData.map(async (page) => {
     try {
       const params = {
-        model_name: "sd_xl_base_1.0.safetensors",
-        prompt: `(masterpiece, best quality),(illustration:1.2),(ultra-detailed:1.2),beautiful detailed eyes,${page.aiPrompt}, subject is black african, very dark skinned, brown. Setting is night time with full moon. MUST BE VERY COLORFUL. MUST be in the style of Disney.`,
-        negative_prompt: "3d render, smooth,plastic, blurry, grainy, low-resolution,anime, deep-fried, oversaturated",
+        model_name: "realcartoon3d_f16fullV30_73399.safetensors",
+        prompt: `masterpiece, best quality, ultra high res, (fractal art:1.3), deep shadow, dark theme, fully clothed, necklace, forlorn, ${page.aiPrompt}. Main character is black, african, very dark skinned. MUST BE VERY COLORFUL. MUST BE AGE APPROPRIATE. MUST be in the style of Disney.`,
+        negative_prompt: `(((nude))), ((naked)), ((signature)),((logo)),(((nipples))), ng_deepnegative_v1_75t, (badhandv4:1.2), (worst quality:2), (low quality:2), (normal quality:2), lowres, bad anatomy, bad hands, ((monochrome)), ((grayscale)), ((watermark)),`,
         width: 512,
         height: 512,
         sampler_name: "DPM++ 2M Karras",

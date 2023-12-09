@@ -1,19 +1,19 @@
 import axios from "axios";
 
 type Options = {
-  prompt: string;
+  story: string;
+  name: string;
+  age?: number | string;
+  gender: string;
 };
 
 const getBedtimeStory = async (options: Options) => {
-  const { prompt } = options;
   try {
-    if (prompt) {
-      const res = await axios.post("/api/story", {
-        inputText: prompt,
-        email: "davisgreg1@gmail.com",
-      });
-      return res;
-    }
+    const res = await axios.post("/api/story", {
+      ...options,
+      email: "davisgreg1@gmail.com",
+    });
+    return res;
   } catch (error) {
     console.log(
       "GREG LOOK!  ~ file: getBedtimeStory.tsx:12 ~ getBedtimeStory ~ error:",
