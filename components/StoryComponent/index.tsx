@@ -37,18 +37,6 @@ export default function StoryComponent() {
   const { name, age, gender, story } = useContext(ChildContext);
   const [isBedtimeStoryFetched, setIsBedtimeStoryFetched] = useState(false);
 
-  const enableQuery = true;
-
-  const getAIPrompt = () => {
-    if (enableQuery) {
-      return `generate ${story}. The main character is: ${name}, age: ${age}, gender: ${gender}. Here are the rules: 1. it MUST be a 470 word bedtime fairy tale. 2.It MUST include a title and an image for the book 3.The generated image MUST come after the title 4. Each different section should have a prompt at the end for novita-sdk to generate an image. 5. The prompt MUST begin with the phrase Generate an image. 6. Each page (BEFORE the actual content) MUST be labeled as Page 1, Page 2, etc...`;
-    }
-    return "";
-  };
-
-  const queryOptions = {
-    prompt: getAIPrompt(),
-  };
 
   const {
     data: storyData,
@@ -60,7 +48,7 @@ export default function StoryComponent() {
       if (ref && ref.current) {
         ref?.current?.continuousStart(0, 8500);
       }
-      const data = await getBedtimeStory(queryOptions);
+      const data = await getBedtimeStory({ story, name, age, gender });
       setIsBedtimeStoryFetched(true);
       return data;
     },
