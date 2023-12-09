@@ -5,7 +5,7 @@ import {
   accounts,
   sessions,
   verificationTokens,
-} from "@/server/db/schema/auth";
+} from "@/server/db/schema";
 import { DBClient } from "@/server/db";
 import type { Adapter } from "@auth/core/adapters";
 

@@ -4,19 +4,21 @@ import {
   mysqlTable,
   primaryKey,
   varchar,
-  text
+  text,
 } from "drizzle-orm/mysql-core";
 import type { AdapterAccount } from "@auth/core/adapters";
 
-export const users = mysqlTable("users", {
+const users = mysqlTable("users", {
   id: varchar("id", { length: 255 }).notNull().primaryKey(),
   name: varchar("name", { length: 255 }),
   email: varchar("email", { length: 255 }).notNull(),
   emailVerified: timestamp("emailVerified", { mode: "date" }),
   image: varchar("image", { length: 255 }),
+  createdAt: timestamp("createdAt", { mode: "date" }).notNull(),
+  bookCount: int("bookCount").notNull().default(0),
 });
 
-export const accounts = mysqlTable(
+const accounts = mysqlTable(
   "accounts",
   {
     userId: varchar("userId", { length: 255 }).notNull(),
@@ -39,13 +41,13 @@ export const accounts = mysqlTable(
   }),
 );
 
-export const sessions = mysqlTable("sessions", {
+const sessions = mysqlTable("sessions", {
   sessionToken: varchar("sessionToken", { length: 255 }).notNull().primaryKey(),
   userId: varchar("userId", { length: 255 }).notNull(),
   expires: timestamp("expires", { mode: "date" }).notNull(),
 });
 
-export const verificationTokens = mysqlTable(
+const verificationTokens = mysqlTable(
   "verificationToken",
   {
     identifier: varchar("identifier", { length: 255 }).notNull(),
@@ -56,3 +58,5 @@ export const verificationTokens = mysqlTable(
     compoundKey: primaryKey(vt.identifier, vt.token),
   }),
 );
+
+export { users, accounts, sessions, verificationTokens };

@@ -5,7 +5,7 @@ import { localStorage } from "@/utils/localStorage";
 import { useQuery } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChildContext } from "@/contexts/childContext";
-import getBedtimeStory from "@/server/getBedtimeStory";
+import getBedtimeStory from "@/server/actions/getBedtimeStory";
 import getImages from "@/utils/getImages";
 import StoryBook from "@/components/StoryBook";
 import LoadingAnimation from "@/components/LoadingAnimation";

@@ -1,3 +1,4 @@
+"use server";
 import { NovitaSDK } from "novita-sdk";
 
 export interface PageRes {
