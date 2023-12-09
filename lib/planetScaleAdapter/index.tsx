@@ -19,7 +19,7 @@ export function PlanetScaleAdapter(
   return {
     createUser: async (data) => {
       const id = crypto.randomUUID();
-      await client.insert(users).values({ ...data, id });
+      await client.insert(users).values({ ...data, id, createdAt: new Date() });
       return client
         .select()
         .from(users)
