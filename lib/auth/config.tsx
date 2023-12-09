@@ -17,6 +17,8 @@ declare module "next-auth" {
   }
 }
 
+export const adapter = PlanetScaleAdapter(db);
+
 export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
@@ -28,7 +30,7 @@ export const authOptions: NextAuthOptions = {
     },
   },
   // @ts-ignore
-  adapter: PlanetScaleAdapter(db),
+  adapter: adapter,
   providers: [
     GoogleProvider({
       clientId: process.env.NEXT_PUBLIC_GOOGLE_ID as string,
