@@ -1,5 +1,6 @@
 "use client";
 import React, { useContext, useEffect, useRef, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import Slider from "@mui/material/Slider";
@@ -9,6 +10,7 @@ import { useSession } from "next-auth/react";
 import { BannerLayer, ParallaxBanner } from "react-scroll-parallax";
 import { useInView } from "react-intersection-observer";
 import { useWindowSize } from "@react-hook/window-size/throttled";
+import { fetchCurrentUser } from "@/server/actions";
 import { localStorage } from "@/utils/localStorage";
 import capitalizedFirstName from "@/utils/capitalizedFirstName";
 import { motion } from "framer-motion";
@@ -43,6 +45,7 @@ const StoryDetailComp = () => {
   const { age, setAge, name, setName, setGender, gender, setStory, story } =
     useContext(ChildContext);
   const { status, data: session } = useSession();
+  const userId = session?.user.id;
   const [widthD, heightD] = useWindowSize();
   const sessionAvailable = status === "authenticated";
   const radioOptions = ["Boy", "Girl", "Neutral"];
@@ -52,6 +55,8 @@ const StoryDetailComp = () => {
   const [width, setWidth] = useState(300);
   const [value, setValue] = useState([1, age]);
   const [scrollingToErrors, setScrollingToErrors] = useState(false);
+  const [userBookCount, setUserBookCount] = useState<number>(-1);
+  const [enableFetchUser, setEnableFetchUser] = useState(true);
 
   const nameRegEx = /^[A-Za-zÀ-ÖØ-öø-ÿ-']+(?:[ -][A-Za-zÀ-ÖØ-öø-ÿ-']+)*$/;
 
@@ -81,8 +86,6 @@ const StoryDetailComp = () => {
       story: story.length >= 30 ? story : defaultStoryText,
     },
     validationSchema: nameValidationSchema,
-    // validateOnChange: true,
-    // validateOnBlur: true,
     onSubmit: (values) => {
       alert(JSON.stringify(values, null, 2));
     },
@@ -95,89 +98,38 @@ const StoryDetailComp = () => {
     gender,
     story,
   });
-  // const activeElement = useActiveElement();
-
-  // const [removeEllipsis, setRemoveEllipsis] = useState(false);
-
-  // Empty dependency array ensures this runs once on mount
-
-  // useEffect(() => {
-  //   window.addEventListener("scroll", handleScroll);
-
-  //   return () => {
-  //     window.removeEventListener("scroll", handleScroll);
-  //   };
-  // }, []);
 
   const isMobile = widthD < 720;
   const isTablet = widthD >= 720 && widthD < 1140;
   const isDesktop = widthD >= 1140;
 
-  // const handleOnClick = (method: string) => signIn(method);
-  // const handleSignOut = () => {
-  //   localStorage.clear();
-  //   signOut();
-  // };
+  const {
+    data: currentUser,
+    isFetched,
+    status: fetchCurrentUserStatus,
+    isStale,
+  } = useQuery({
+    queryKey: ["fetchCurrentUser", userId],
+    queryFn: async () => {
+      if (userId) {
+        const data = await fetchCurrentUser(userId);
+        if (data) {
+          setUserBookCount(data[0]?.bookCount);
+          return data;
+        }
+      }
+    },
+    enabled: enableFetchUser,
+    staleTime: 60 * 60000, // 1 hour
+  });
 
-  // Function to handle scrolling
-  // const handleScroll = () => {
-  //   const closestBanner = bannerRefs.current.reduce(
-  //     (closest: any, bannerRef: any) => {
-  //       const banner = bannerRef.current;
-  //       if (!banner) return closest;
-
-  //       const bannerRect = banner.getBoundingClientRect();
-  //       const bannerDistance = Math.abs(
-  //         heightD / 2 - (bannerRect.top + bannerRect.height / 2),
-  //       );
-
-  //       return bannerDistance < closest.distance
-  //         ? { banner, distance: bannerDistance }
-  //         : closest;
-  //     },
-  //     { banner: null, distance: Infinity },
-  //   );
-
-  //   if (closestBanner.banner) {
-  //     closestBanner.banner.scrollIntoView({
-  //       behavior: "smooth",
-  //       block: "end",
-  //       inline: "nearest",
-  //     });
-  //   }
-  // };
-
-  // Use `useCallback` so we don't recreate the function on each render
-  // const setRefs = useCallback(
-  //   (node) => {
-  //     // Ref's from useRef needs to have the node assigned to `current`
-  //     ref.current = node;
-  //     // Callback refs, like the one from `useInView`, is a function that takes the node as an argument
-  //     inViewRef(node);
-  //   },
-  //   [inViewRef],
-  // );
-
-  // useEffect(() => {
-  //   if (
-  //     storySectionInView &&
-  //     (values.story === "A story about " || !values.story) &&
-  //     !scrollingToErrors
-  //   ) {
-  //     const textAreaElement = textAreaRef?.current;
-  //     if (textAreaElement) {
-  //       textAreaElement.focus();
-
-  //       const length = textAreaElement.value.length;
-  //       textAreaElement.setSelectionRange(length, length);
-  //     }
-  //   } else {
-  //     const textAreaElement = textAreaRef?.current;
-  //     if (textAreaElement) {
-  //       textAreaElement.blur();
-  //     }
-  //   }
-  // }, [storySectionInView, setScrollingToErrors]);
+  useEffect(() => {
+    if (isStale) {
+      setEnableFetchUser(true);
+    } else {
+      setEnableFetchUser(false);
+    }
+  }, [isStale, userId]);
 
   useEffect(() => {
     if (!values.gender && genderSectionInView) {
@@ -206,82 +158,6 @@ const StoryDetailComp = () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, [isMobile]);
-
-  // useEffect(() => {
-  //   const handleScroll = () => {
-  //     const scrollY = window.scrollY;
-  //     const windowHeight = window.innerHeight;
-  //     const scrolled = scrollY / windowHeight; // 0 at top, increases with scroll
-
-  //     // Ensure that the value is between 0 and 1
-  //     const opacity = Math.min(1, Math.max(scrolled, 0));
-
-  //     // Interpolate between transparent and your color
-  //     const color = `rgba(99, 85, 85, ${opacity})`; // #635555 in rgba
-
-  //     setBackgroundColor(color);
-  //   };
-
-  //   window.addEventListener('scroll', handleScroll);
-  //   return () => {
-  //     window.removeEventListener('scroll', handleScroll);
-  //   };
-  // }, []);
-
-  // useEffect(() => {
-  //   if (activeElement === textAreaRef.current) {
-  //     setRemoveEllipsis(true);
-  //   }
-  // }, [activeElement, removeEllipsis]);
-
-  // useEffect(() => {
-  //   if (nameSectionInView) {
-  //     const nameSection = document.getElementById("nameSection");
-  //     if (nameSection) {
-  //       scrollElementIntoView(nameSection);
-  //     }
-  //   }
-  //   if (ageSectionInView) {
-  //     const ageSection = document.getElementById("ageSection");
-  //     if (ageSection) {
-  //       scrollElementIntoView(ageSection);
-  //     }
-  //   }
-  //   if (genderSectionInView) {
-  //     const genderSection = document.getElementById("genderSection");
-  //     if (genderSection) {
-  //       scrollElementIntoView(genderSection);
-  //     }
-  //   }
-
-  //   if (storySectionInView) {
-  //     const storySection = document.getElementById("storySection");
-  //     if (storySection) {
-  //       scrollElementIntoView(storySection);
-  //     }
-  //   }
-
-  //   if (submitSectionInView) {
-  //     const submitSection = document.getElementById("submitSection");
-  //     if (submitSection) {
-  //       scrollElementIntoView(submitSection);
-  //     }
-  //   }
-  // }, [
-  //   nameSectionInView,
-  //   ageSectionInView,
-  //   genderSectionInView,
-  //   storySectionInView,
-  //   submitSectionInView,
-  // ]);
-
-  // const scrollElementIntoView = (element: HTMLElement) => {
-  //   element.scrollIntoView({
-  //     behavior: "smooth",
-  //     block: "center",
-  //     inline: "nearest",
-  //   });
-  // };
 
   const marks = [
     {
@@ -512,7 +388,16 @@ const StoryDetailComp = () => {
 
       setFieldError("story", "Fairy Tale is required.");
     } else {
-      sessionAvailable ? router.push("/story") : router.push("/signin");
+      switch (true) {
+        case currentUser && currentUser[0]?.bookCount >= 3:
+          // return router.push("/purchase");
+          return router.push("/story");
+
+        case sessionAvailable:
+          return router.push("/story");
+        case !sessionAvailable:
+          return router.push("/signin");
+      }
     }
   };
 

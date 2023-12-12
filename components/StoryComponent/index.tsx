@@ -9,6 +9,8 @@ import getBedtimeStory from "@/server/actions/getBedtimeStory";
 import getImages from "@/utils/getImages";
 import StoryBook from "@/components/StoryBook";
 import LoadingAnimation from "@/components/LoadingAnimation";
+import { increaseBookCount } from "@/server/actions";
+import { useSession } from "next-auth/react";
 
 type ResultsType = {
   pageNumber?: string;
@@ -28,6 +30,8 @@ type StoryObjectType = {
 
 export default function StoryComponent() {
   const ref = useRef<any>(null);
+  const { data: session } = useSession();
+  const userId = session?.user.id;
   const aiPageDataFromLocalStorage = localStorage.getItem(
     "aiPageData",
   ) as string;
@@ -36,7 +40,6 @@ export default function StoryComponent() {
     : [];
   const { name, age, gender, story } = useContext(ChildContext);
   const [isBedtimeStoryFetched, setIsBedtimeStoryFetched] = useState(false);
-
 
   const {
     data: storyData,
@@ -122,6 +125,9 @@ export default function StoryComponent() {
       setIsBedtimeStoryFetched(false);
       if (ref && ref.current) {
         ref?.current?.complete();
+      }
+      if (userId) {
+        increaseBookCount(userId);
       }
       return data;
     },
