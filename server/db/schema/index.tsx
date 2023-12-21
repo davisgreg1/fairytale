@@ -5,18 +5,29 @@ import {
   primaryKey,
   varchar,
   text,
+  index,
+  uniqueIndex,
 } from "drizzle-orm/mysql-core";
 import type { AdapterAccount } from "@auth/core/adapters";
 
-const users = mysqlTable("users", {
-  id: varchar("id", { length: 255 }).notNull().primaryKey(),
-  name: varchar("name", { length: 255 }),
-  email: varchar("email", { length: 255 }).notNull(),
-  emailVerified: timestamp("emailVerified", { mode: "date" }),
-  image: varchar("image", { length: 255 }),
-  createdAt: timestamp("createdAt", { mode: "date" }).notNull(),
-  bookCount: int("bookCount").notNull().default(0),
-});
+const users = mysqlTable(
+  "users",
+  {
+    id: varchar("id", { length: 255 }).notNull().primaryKey(),
+    name: varchar("name", { length: 255 }),
+    email: varchar("email", { length: 255 }).notNull(),
+    emailVerified: timestamp("emailVerified", { mode: "date" }),
+    image: varchar("image", { length: 255 }),
+    createdAt: timestamp("createdAt", { mode: "date" }).notNull(),
+    bookCount: int("bookCount").notNull().default(0),
+  },
+  (table) => {
+    return {
+      nameIdx: index("bookCount_idx").on(table.bookCount),
+      emailIdx: uniqueIndex("email_idx").on(table.email),
+    };
+  },
+);
 
 const accounts = mysqlTable(
   "accounts",

@@ -126,10 +126,12 @@ export default function StoryComponent() {
       if (ref && ref.current) {
         ref?.current?.complete();
       }
-      if (userId) {
-        increaseBookCount(userId);
+      if (data) {
+        if (userId && data.length > 0) {
+          increaseBookCount(userId);
+        }
+        return data;
       }
-      return data;
     },
     enabled: isBedtimeStoryFetched,
     refetchOnWindowFocus: false,

@@ -35,7 +35,7 @@ const handler = async (req: Request): Promise<Response> => {
     messages: [
       {
         role: "user",
-        content: `Generate a story about ${story}. The main character is: ${name}, age: ${age}, gender: ${gender}. Here are the rules: 1. it MUST be a 430 word bedtime fairy tale. 2.It MUST include a title and an image for the book 3.The generated image MUST come after the title 4. Each different section should have a prompt at the end for novita-sdk to generate an image. 5. The prompt MUST begin with the phrase Generate an image. 6. Each page (BEFORE the actual content) MUST be labeled as Page 1, Page 2, etc...`,
+        content: `Generate a story about ${story}. The main character is: ${name}, age: ${age}, gender: ${gender}. Here are the rules: 1. it MUST be a 430 word bedtime fairy tale. 2.It MUST include a title and an image for the book 3.The generated image MUST come after the title 4. Each different section should have a prompt at the end for novita-sdk to generate an image. The prompt MUST be gender and age appropriate. 5. The prompt MUST begin with the phrase Generate an image. 6. Each page (BEFORE the actual content) MUST be labeled as Page 1, Page 2, etc...`,
       },
     ],
     max_tokens: maxTokenCount,
