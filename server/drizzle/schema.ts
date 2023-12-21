@@ -34,6 +34,8 @@ export const users = mysqlTable("users", {
 	email: varchar("email", { length: 255 }).notNull(),
 	emailVerified: timestamp("emailVerified", { mode: 'string' }).defaultNow(),
 	image: varchar("image", { length: 255 }),
+	createdAt: timestamp("createdAt", { mode: 'string' }).defaultNow().notNull(),
+	bookCount: int("bookCount").default(0).notNull(),
 });
 
 export const verificationToken = mysqlTable("verificationToken", {

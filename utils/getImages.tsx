@@ -19,13 +19,13 @@ export default async function getImages(storyData?: PageRes[]) {
   const imagePromises = storyData.map(async (page) => {
     try {
       const params = {
-        model_name: "realcartoon3d_f16fullV30_73399.safetensors",
-        prompt: `masterpiece, best quality, ultra high res, (fractal art:1.3), deep shadow, dark theme, fully clothed, necklace, forlorn, ${page.aiPrompt}. Main character is black, african, very dark skinned. MUST BE VERY COLORFUL. MUST BE AGE APPROPRIATE. MUST be in the style of Disney.`,
-        negative_prompt: `(((nude))), ((naked)), ((signature)),((logo)),(((nipples))), ng_deepnegative_v1_75t, (badhandv4:1.2), (worst quality:2), (low quality:2), (normal quality:2), lowres, bad anatomy, bad hands, ((monochrome)), ((grayscale)), ((watermark)),`,
+        model_name: "disneyPixarCartoon_v10_48754.safetensors",
+        prompt: `masterpiece, high quality best quality, ${page.aiPrompt}. Main character is black, african, very dark skinned. `,
+        negative_prompt: "EasyNegative, drawn by bad-artist, sketch by bad-artist-anime, (bad_prompt:0.8), (artist name, signature, watermark:1.4), (ugly:1.2), (worst quality, poor details:1.4), bad-hands-5, badhandv4, blurry",
         width: 512,
         height: 512,
         sampler_name: "DPM++ 2M Karras",
-        cfg_scale: 7,
+        cfg_scale: 7.5,
         steps: 20,
         batch_size: 1,
         n_iter: 1,
