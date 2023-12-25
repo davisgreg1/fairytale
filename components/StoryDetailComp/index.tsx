@@ -292,13 +292,26 @@ const StoryDetailComp = () => {
     ),
   };
 
+  const getBookCountText = () => {
+    switch (currentUser && currentUser[0].freeStoriesRemaining) {
+      case 3:
+        return "You have 3 free stories remaining!";
+      case 2:
+        return "You have 2 free stories remaining!";
+      case 1:
+        return "You have 1 free story remaining!";
+      default:
+        return "Purchase to unlock!";
+    }
+  };
+
   const getStartedHeadline: BannerLayer = {
     translateY: isMobile ? [-7, 0] : [5, 0],
     scale: [1, 1.05, "easeOutCubic"],
     shouldAlwaysCompleteAnimation: true,
     expanded: false,
     children: (
-      <div className="absolute inset-0 flex items-center justify-center">
+      <div className="absolute inset-0 flex items-center justify-center flex-col">
         <h1 className="mobile:text-4xl tablet:text-6xl desktop:text-6xl text-white font-thin">
           {`${
             isValid && values.story !== defaultStoryText
@@ -306,6 +319,9 @@ const StoryDetailComp = () => {
               : `Fill in the details.`
           }`}
         </h1>
+        <span className="mobile:text-2xl tablet:text-3xl desktop:text-3xl text-white font-thin mt-4">
+          {getBookCountText()}
+        </span>
       </div>
     ),
   };
@@ -578,7 +594,7 @@ const StoryDetailComp = () => {
         <ParallaxBanner
           layers={[backgroundFull, getStartedHeadline, foreground]}
           className="aspect-[2/1] bg-black h-screen ">
-          <div className="w-36 h-36 m-auto relative top-1/2 flex flex-col justify-center items-center">
+          <div className="w-36 h-44 m-auto relative top-1/2 flex flex-col justify-center items-center">
             <button
               onClick={handleNavigation}
               type="button"
