@@ -10,7 +10,7 @@ export default {
   out: "./server/drizzle",
   driver: "mysql2",
   dbCredentials: {
-    connectionString: process.env.DATABASE_URL!,
+    uri: process.env.DATABASE_URL!,
   },
   verbose: true,
   strict: false,

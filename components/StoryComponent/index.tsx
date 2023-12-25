@@ -9,8 +9,14 @@ import getBedtimeStory from "@/server/actions/getBedtimeStory";
 import getImages from "@/utils/getImages";
 import StoryBook from "@/components/StoryBook";
 import LoadingAnimation from "@/components/LoadingAnimation";
-import { increaseBookCount } from "@/server/actions";
+import {
+  fetchCurrentUser,
+  increaseBookCount,
+  updateFreeStoriesRemaining,
+  updateFairyTaleContent,
+} from "@/server/actions";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 type ResultsType = {
   pageNumber?: string;
@@ -29,21 +35,41 @@ type StoryObjectType = {
 };
 
 export default function StoryComponent() {
+  const router = useRouter();
+
   const ref = useRef<any>(null);
   const { data: session } = useSession();
   const userId = session?.user.id;
   const aiPageDataFromLocalStorage = localStorage.getItem(
     "aiPageData",
   ) as string;
-  const parsedAiPageDataFromLocalStorage = aiPageDataFromLocalStorage
-    ? JSON.parse(aiPageDataFromLocalStorage)
-    : [];
+  const parsedAiPageDataFromLocalStorage =
+    aiPageDataFromLocalStorage?.length > 0
+      ? JSON.parse(aiPageDataFromLocalStorage)
+      : [];
   const { name, age, gender, story } = useContext(ChildContext);
   const [isBedtimeStoryFetched, setIsBedtimeStoryFetched] = useState(false);
 
   const {
+    data: currentUser,
+    isFetched: fetchedCurrentUser,
+    status: fetchCurrentUserStatus,
+    isStale,
+  } = useQuery({
+    queryKey: ["fetchCurrentUser", userId],
+    queryFn: async () => {
+      if (userId) {
+        const data = await fetchCurrentUser(userId);
+        return data;
+      }
+    },
+    enabled: true,
+  });
+  const enabled = currentUser && currentUser[0].freeStoriesRemaining > 0;
+  const {
     data: storyData,
     isFetched,
+    isFetching,
     status,
   } = useQuery({
     queryKey: ["bedtimeStory"],
@@ -55,7 +81,7 @@ export default function StoryComponent() {
       setIsBedtimeStoryFetched(true);
       return data;
     },
-    enabled: parsedAiPageDataFromLocalStorage.length === 0,
+    enabled: !!enabled,
     staleTime: Infinity,
     select: (data) => {
       const storyPages = data?.data.split("\n\n");
@@ -116,6 +142,7 @@ export default function StoryComponent() {
   const {
     data: imageAndStoryData,
     isFetched: imageAndStoryDataFetched,
+    isFetching: isFetchingImages,
     status: imageAndStoryDataStatus,
   } = useQuery({
     queryKey: ["getImages"],
@@ -129,6 +156,9 @@ export default function StoryComponent() {
       if (data) {
         if (userId && data.length > 0) {
           increaseBookCount(userId);
+          if (currentUser && currentUser[0].freeStoriesRemaining > 0) {
+            updateFreeStoriesRemaining("dec", userId);
+          }
         }
         return data;
       }
@@ -137,7 +167,11 @@ export default function StoryComponent() {
     refetchOnWindowFocus: false,
     staleTime: Infinity,
     select: (data) => {
-      localStorage.setItem("aiPageData", JSON.stringify(data));
+      const jsonData = JSON.stringify(data);
+      localStorage.setItem("aiPageData", jsonData);
+      if (userId) {
+        updateFairyTaleContent(userId, jsonData);
+      }
       return data;
     },
   });
@@ -178,6 +212,8 @@ export default function StoryComponent() {
             exit={{ opacity: 0 }}>
             <StoryBook
               content={imageAndStoryData || parsedAiPageDataFromLocalStorage}
+              isFetchingImages={isFetchingImages}
+              isFetching={isFetching}
             />
           </motion.div>
         )}

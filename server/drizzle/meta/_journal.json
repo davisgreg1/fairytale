@@ -15,6 +15,27 @@
       "when": 1702684511193,
       "tag": "0001_closed_miss_america",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1703440180447,
+      "tag": "0002_quiet_maddog",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1703454602634,
+      "tag": "0003_pink_donald_blake",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1703480352166,
+      "tag": "0004_fine_the_fury",
+      "breakpoints": true
     }
   ]
 }

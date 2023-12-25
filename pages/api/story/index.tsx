@@ -1,4 +1,7 @@
 import { OpenAIStream, OpenAIStreamPayload } from "@/utils/OpenAIStream";
+import { getSession } from "next-auth/react";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth/config";
 
 if (!process.env.NEXT_PUBLIC_OPENAI_API_KEY) {
   throw new Error("Missing env var from OpenAI");

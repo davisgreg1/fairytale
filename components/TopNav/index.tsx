@@ -4,8 +4,8 @@ import { usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import AccountMenu from "@/components/AccountMenu";
-import styles from "./styles.module.css";
 import SwipeDrawer from "@/components/SwipeDrawer";
+import styles from "./styles.module.css";
 
 const linkVariants = {
   hover: {
