@@ -59,7 +59,7 @@ export default function SignIn() {
       <motion.button
         variants={fadeInUp}
         onClick={() => handleOnSignIn("google")}
-        className="bg-pink-500 hover:bg-pink-600 mt-8 py-3 px-6 rounded text-white font-bold flex items-center">
+        className="bg-pink-500 hover:bg-pink-600 mt-8 py-3 px-6 rounded text-white font-bold flex items-center w-auto">
         <AiFillGoogleCircle className="mr-2" />
         Sign in with Google
       </motion.button>

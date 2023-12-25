@@ -8,7 +8,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
-import { FcGoogle, FcHome } from "react-icons/fc";
+import { FcGoogle, FcHome, FcReadingEbook } from "react-icons/fc";
 import { signIn, useSession, signOut } from "next-auth/react";
 import { IoPersonCircle } from "react-icons/io5";
 import { localStorage } from "@/utils/localStorage";
@@ -19,6 +19,10 @@ export default function AccountMenu() {
   const authenticated = status === "authenticated";
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+  const aiPageDataFromLocalStorage = localStorage.getItem(
+    "aiPageData",
+  ) as string;
+  const dataExist = aiPageDataFromLocalStorage?.length > 0;
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -31,6 +35,11 @@ export default function AccountMenu() {
     router.push("/");
   };
 
+  const handleOnNavigateToStory = () => {
+    setAnchorEl(null);
+    router.push("/story");
+  };
+
   const handleOnAuthClick = async () => {
     setAnchorEl(null);
     if (authenticated) {
@@ -39,7 +48,7 @@ export default function AccountMenu() {
       });
       localStorage.clear();
     } else {
-      router.push('/signin')
+      router.push("/signin");
     }
   };
 
@@ -102,6 +111,14 @@ export default function AccountMenu() {
           </ListItemIcon>
           Home
         </MenuItem>
+        {dataExist && (
+          <MenuItem onClick={handleOnNavigateToStory}>
+            <ListItemIcon>
+              <FcReadingEbook size={"1.5rem"} />
+            </ListItemIcon>
+            {`You're Fairy Tale`}
+          </MenuItem>
+        )}
         <Divider />
         <MenuItem onClick={handleOnAuthClick}>
           <ListItemIcon>

@@ -389,9 +389,8 @@ const StoryDetailComp = () => {
       setFieldError("story", "Fairy Tale is required.");
     } else {
       switch (true) {
-        case currentUser && currentUser[0]?.bookCount >= 3:
-          // return router.push("/purchase");
-          return router.push("/story");
+        case currentUser && +currentUser[0]?.freeStoriesRemaining === 0:
+          return router.push("/purchase");
 
         case sessionAvailable:
           return router.push("/story");

@@ -11,7 +11,6 @@ const getBedtimeStory = async (options: Options) => {
   try {
     const res = await axios.post("/api/story", {
       ...options,
-      email: "davisgreg1@gmail.com",
     });
     return res;
   } catch (error: any) {

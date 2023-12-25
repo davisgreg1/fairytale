@@ -1,4 +1,4 @@
-import { mysqlTable, mysqlSchema, AnyMySqlColumn, primaryKey, varchar, int, text, timestamp } from "drizzle-orm/mysql-core"
+import { mysqlTable, mysqlSchema, AnyMySqlColumn, primaryKey, varchar, int, text, timestamp, index, uniqueIndex } from "drizzle-orm/mysql-core"
 import { sql } from "drizzle-orm"
 
 
@@ -22,6 +22,24 @@ export const accounts = mysqlTable("accounts", {
 	}
 });
 
+export const fairyTales = mysqlTable("fairyTales", {
+	id: varchar("id", { length: 255 }).primaryKey().notNull(),
+	userId: varchar("userId", { length: 255 }).notNull(),
+	title: varchar("title", { length: 255 }).notNull(),
+	content: text("content").notNull(),
+	createdAt: timestamp("createdAt", { mode: 'string' }).notNull(),
+});
+
+export const payments = mysqlTable("payments", {
+	id: varchar("id", { length: 255 }).primaryKey().notNull(),
+	userId: varchar("userId", { length: 255 }).notNull(),
+	fairyTaleId: varchar("fairyTaleId", { length: 255 }).notNull(),
+	amount: int("amount").notNull(),
+	stripePaymentId: varchar("stripePaymentId", { length: 255 }),
+	status: varchar("status", { length: 255 }).notNull(),
+	createdAt: timestamp("createdAt", { mode: 'string' }).notNull(),
+});
+
 export const sessions = mysqlTable("sessions", {
 	sessionToken: varchar("sessionToken", { length: 255 }).primaryKey().notNull(),
 	userId: varchar("userId", { length: 255 }).notNull(),
@@ -32,10 +50,18 @@ export const users = mysqlTable("users", {
 	id: varchar("id", { length: 255 }).primaryKey().notNull(),
 	name: varchar("name", { length: 255 }),
 	email: varchar("email", { length: 255 }).notNull(),
-	emailVerified: timestamp("emailVerified", { mode: 'string' }).defaultNow(),
+	emailVerified: timestamp("emailVerified", { mode: 'string' }),
 	image: varchar("image", { length: 255 }),
-	createdAt: timestamp("createdAt", { mode: 'string' }).defaultNow().notNull(),
+	createdAt: timestamp("createdAt", { mode: 'string' }).notNull(),
 	bookCount: int("bookCount").default(0).notNull(),
+	freeStoriesRemaining: int("freeStoriesRemaining").default(3).notNull(),
+	isSubscribed: int("isSubscribed").default(0).notNull(),
+},
+(table) => {
+	return {
+		bookCountIdx: index("bookCount_idx").on(table.bookCount),
+		emailIdx: uniqueIndex("email_idx").on(table.email),
+	}
 });
 
 export const verificationToken = mysqlTable("verificationToken", {

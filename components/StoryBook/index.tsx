@@ -12,6 +12,7 @@ import HTMLFlipBook from "react-pageflip";
 import { ChildContext } from "@/contexts/childContext";
 import NextAnimation from "../NextAnimation";
 import PreviousAnimation from "../PreviousAnimation";
+import { useRouter } from "next/navigation";
 
 interface PagePropsType {
   storyText: string;
@@ -22,11 +23,19 @@ interface PagePropsType {
 }
 interface StoryBookProps {
   content: PagePropsType[];
+  isFetchingImages: boolean;
+  isFetching: boolean;
 }
 
-export default function StoryBook(content: StoryBookProps) {
+export default function StoryBook({
+  content,
+  isFetching,
+  isFetchingImages,
+}: StoryBookProps) {
+  const router = useRouter();
   const [page, setPage] = useState(0);
-  const aiPageData = content?.content ?? [];
+  const aiPageData = content ?? [];
+
   const aiPageDataLength = aiPageData.length;
   const lastPage = aiPageDataLength === page;
 
@@ -66,6 +75,10 @@ export default function StoryBook(content: StoryBookProps) {
     if (flipBookRef && flipBookRef.current) {
       flipBookRef?.current?.pageFlip().flipPrev();
     }
+  };
+
+  const handleNavigateToStoryDetails = () => {
+    router.push("/storyDetails");
   };
 
   return (
@@ -137,17 +150,30 @@ export default function StoryBook(content: StoryBookProps) {
             })}
             <PageCover>THE END</PageCover>
           </HTMLFlipBook>
-          <div className="relative bottom-0 mx-4 flex">
-            {page === 0 ? null : (
-              <span onClick={prevButtonClick}>
-                <PreviousAnimation />
-              </span>
-            )}
-            {lastPage ? null : (
-              <span className="relative" onClick={nextButtonClick}>
-                <NextAnimation />
-              </span>
-            )}
+          <div className="flex flex-col justify-center items-center">
+            <div className="relative bottom-0 mx-4 flex">
+              {page === 0 ? null : (
+                <span onClick={prevButtonClick}>
+                  <PreviousAnimation />
+                </span>
+              )}
+              {lastPage ? null : (
+                <span className="relative" onClick={nextButtonClick}>
+                  <NextAnimation />
+                </span>
+              )}
+            </div>
+            <div className="flex justify-center items-center">
+              <button
+                disabled={isFetching || isFetchingImages}
+                onClick={handleNavigateToStoryDetails}
+                className="bg-blue-500 hover:bg-blue-700 text-black font-bold py-2 px-4 m-16 rounded cursor-pointer disabled:bg-slate-400"
+                type="button">
+                {isFetching || isFetchingImages
+                  ? `Getting Another Story`
+                  : `Get Another Story`}
+              </button>
+            </div>
           </div>
         </>
       ) : (
