@@ -16,7 +16,6 @@ import {
   updateFairyTaleContent,
 } from "@/server/actions";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 
 type ResultsType = {
   pageNumber?: string;
@@ -35,8 +34,6 @@ type StoryObjectType = {
 };
 
 export default function StoryComponent() {
-  const router = useRouter();
-
   const ref = useRef<any>(null);
   const { data: session } = useSession();
   const userId = session?.user.id;
