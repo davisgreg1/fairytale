@@ -116,7 +116,7 @@ export default function AccountMenu() {
             <ListItemIcon>
               <FcReadingEbook size={"1.5rem"} />
             </ListItemIcon>
-            {`You're Fairy Tale`}
+            {`Your Fairy Tale`}
           </MenuItem>
         )}
         <Divider />

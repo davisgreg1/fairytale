@@ -87,7 +87,7 @@ export default function SwipeDrawer() {
       onClick={toggleDrawer(false)}
       onKeyDown={toggleDrawer(false)}>
       <List>
-        {["Home", dataExist ? `You're Fairy Tale` : ""]
+        {["Home", dataExist ? `Your Fairy Tale` : ""]
           .filter((elem) => elem !== "")
           .map((text, index) => (
             <ListItem
